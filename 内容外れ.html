@@ -2,218 +2,138 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>iOS Alert Builder</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Alert App Builder</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #000;
-  color: #fff;
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  height:100vh;
+  overflow:hidden;
 }
 
-/* ===== 設定UI ===== */
-.container {
-  padding: 15px;
+/* ===== ホーム ===== */
+.home{
+  position:absolute; inset:0;
+  padding:40px 20px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+  background:
+    radial-gradient(circle at 20% 10%, #2e86de, transparent 40%),
+    radial-gradient(circle at 80% 30%, #6c5ce7, transparent 45%),
+    linear-gradient(180deg,#0a3d62,#1e5799);
+}
+.icon{ text-align:center; color:#fff; font-size:12px; }
+.appIcon{
+  width:60px;height:60px;margin:auto;border-radius:14px;
+  background:linear-gradient(135deg,#ff3b30,#ff9f0a);
 }
 
-.type {
-  background: #1c1c1e;
-  border-radius: 14px;
-  padding: 15px;
-  margin-bottom: 15px;
+/* ===== アプリ画面 ===== */
+.appView{
+  position:absolute; inset:0;
+  background:#000; color:#fff;
+  display:none; padding:20px;
+}
+.appView h1{
+  font-size:20px; margin:0 0 14px;
+}
+label{ font-size:13px; color:#b0b0b0; display:block; margin-top:12px; }
+input, textarea{
+  width:100%; box-sizing:border-box;
+  background:#1c1c1e; color:#fff;
+  border:0; border-radius:10px;
+  padding:10px; font-size:15px;
+}
+textarea{ resize:none; height:70px; }
+.btn{
+  margin-top:16px; width:100%;
+  padding:12px; border-radius:12px;
+  border:0; font-size:17px;
+  background:#0a84ff; color:#fff;
 }
 
-.type h2 {
-  margin: 0 0 10px;
-  font-size: 17px;
+/* ===== アラート ===== */
+.overlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.36);
+  backdrop-filter: blur(14px) saturate(1.25);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
+  display:none; align-items:center; justify-content:center; z-index:10;
 }
-
-label {
-  font-size: 13px;
-  color: #b0b0b0;
-  display: block;
-  margin: 6px 0 3px;
+.alert{
+  width:270px; border-radius:14px; overflow:hidden; text-align:center;
+  background:linear-gradient(180deg,rgba(242,242,247,.92),rgba(242,242,247,.84));
 }
-
-input, textarea {
-  width: 100%;
-  background: #2c2c2e;
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
-  font-size: 15px;
-  box-sizing: border-box;
+.alert h3{
+  margin:16px 16px 6px; font-size:17px; font-weight:600; color:#000;
 }
-
-textarea {
-  resize: none;
-  height: 55px;
+.alert p{
+  margin:0 16px 14px; font-size:13.5px; color:#3a3a3c;
 }
-
-button.main {
-  width: 100%;
-  margin-top: 10px;
-  padding: 12px;
-  font-size: 17px;
-  border-radius: 12px;
-  border: none;
-  background: #0a84ff;
-  color: white;
+.buttons{ display:flex; border-top:.5px solid rgba(60,60,67,.29); }
+.buttons button{
+  flex:1; padding:12px 0; font-size:17px; border:0;
+  background:transparent; color:#007aff; font-weight:600;
 }
-
-/* ===== iOSアラート ===== */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.38);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.alert {
-  width: 270px;
-  background: #f2f2f7;
-  border-radius: 14px;
-  text-align: center;
-  overflow: hidden;
-}
-
-.alert h3 {
-  margin: 16px 16px 6px;
-  font-size: 17px;
-  font-weight: 600;
-  color: #000;
-}
-
-.alert p {
-  margin: 0 16px 14px;
-  font-size: 13.5px;
-  color: #3a3a3c;
-}
-
-.buttons {
-  display: flex;
-  border-top: 1px solid #c6c6c8;
-}
-
-.buttons.vertical {
-  flex-direction: column;
-}
-
-.buttons button {
-  flex: 1;
-  padding: 12px 0;
-  font-size: 17px;
-  border: none;
-  background: transparent;
-}
-
-.buttons button:not(:last-child) {
-  border-right: 1px solid #c6c6c8;
-}
-
-.blue { color: #007aff; font-weight: 600; }
-.red  { color: #ff3b30; font-weight: 600; }
+.buttons button+button{ border-left:.5px solid rgba(60,60,67,.29); }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-<!-- 1 キャンセル / 許可 -->
-<div class="type">
-  <h2>① キャンセル / 許可</h2>
-  <label>タイトル</label>
-  <input id="t1" value="“Safari”がアクセスを求めています">
-  <label>メッセージ</label>
-  <textarea id="m1">この操作を許可しますか？</textarea>
-  <button class="main" onclick="alertAllowDeny()">表示</button>
+<!-- ホーム -->
+<div class="home" id="home">
+  <div class="icon" onclick="openApp()">
+    <div class="appIcon"></div>
+    アラート
+  </div>
 </div>
 
-<!-- 2 キャンセル / OK -->
-<div class="type">
-  <h2>② キャンセル / OK</h2>
-  <label>タイトル</label>
-  <input id="t2" value="確認">
-  <label>メッセージ</label>
-  <textarea id="m2">この操作を実行しますか？</textarea>
-  <button class="main" onclick="alertCancelOK()">表示</button>
+<!-- アプリ -->
+<div class="appView" id="app">
+  <h1>アラート</h1>
+
+  <label>タイトル（必須）</label>
+  <input id="titleInput" placeholder="例：“Safari”がアクセスを求めています">
+
+  <label>メッセージ（任意）</label>
+  <textarea id="msgInput" placeholder="例：この操作を許可しますか？"></textarea>
+
+  <button class="btn" onclick="showAlert()">表示</button>
 </div>
 
-<!-- 3 わかりました -->
-<div class="type">
-  <h2>③ わかりました</h2>
-  <label>タイトル</label>
-  <input id="t3" value="お知らせ">
-  <label>メッセージ</label>
-  <textarea id="m3">設定が完了しました。</textarea>
-  <button class="main" onclick="alertOK()">表示</button>
-</div>
-
+<!-- システムアラート -->
+<div class="overlay" id="ov">
+  <div class="alert">
+    <h3 id="aTitle"></h3>
+    <p id="aMsg"></p>
+    <div class="buttons">
+      <button onclick="closeAlert()">キャンセル</button>
+      <button onclick="closeAlert()">許可</button>
+    </div>
+  </div>
 </div>
 
 <script>
-function showAlert(title, message, buttons, vertical=false) {
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-
-  overlay.innerHTML = `
-    <div class="alert">
-      <h3>${title}</h3>
-      <p>${message.replace(/\n/g,"<br>")}</p>
-      <div class="buttons ${vertical ? "vertical" : ""}">
-        ${buttons}
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
+function openApp(){
+  home.style.display="none";
+  app.style.display="block";
 }
 
-function closeAlert(btn) {
-  btn.closest(".overlay").remove();
+function showAlert(){
+  const t = titleInput.value.trim();
+  if(!t) return; // タイトル必須
+
+  aTitle.textContent = t;
+  aMsg.textContent = msgInput.value || "";
+  ov.style.display="flex";
 }
 
-/* ① キャンセル / 許可（両方青） */
-function alertAllowDeny() {
-  showAlert(
-    t1.value,
-    m1.value,
-    `
-    <button class="blue" onclick="closeAlert(this)">キャンセル</button>
-    <button class="blue" onclick="closeAlert(this)">許可</button>
-    `
-  );
-}
-
-/* ② キャンセル / OK */
-function alertCancelOK() {
-  showAlert(
-    t2.value,
-    m2.value,
-    `
-    <button class="blue" onclick="closeAlert(this)">キャンセル</button>
-    <button class="blue" onclick="closeAlert(this)">OK</button>
-    `
-  );
-}
-
-/* ③ わかりました */
-function alertOK() {
-  showAlert(
-    t3.value,
-    m3.value,
-    `
-    <button class="blue" onclick="closeAlert(this)">わかりました</button>
-    `,
-    true
-  );
+function closeAlert(){
+  ov.style.display="none"; // アプリ画面に戻る
 }
 </script>
 

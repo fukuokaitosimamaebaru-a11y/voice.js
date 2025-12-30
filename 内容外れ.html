@@ -126,9 +126,9 @@ button.main {
 
 <div class="container">
 
-<!-- 1 許可 / 拒否 -->
+<!-- 1 キャンセル / 許可 -->
 <div class="type">
-  <h2>① 許可 / 拒否</h2>
+  <h2>① キャンセル / 許可</h2>
   <label>タイトル</label>
   <input id="t1" value="“Safari”がアクセスを求めています">
   <label>メッセージ</label>
@@ -180,13 +180,13 @@ function closeAlert(btn) {
   btn.closest(".overlay").remove();
 }
 
-/* ① 許可 / 拒否 */
+/* ① キャンセル / 許可（両方青） */
 function alertAllowDeny() {
   showAlert(
     t1.value,
     m1.value,
     `
-    <button class="red" onclick="closeAlert(this)">拒否</button>
+    <button class="blue" onclick="closeAlert(this)">キャンセル</button>
     <button class="blue" onclick="closeAlert(this)">許可</button>
     `
   );
@@ -198,7 +198,7 @@ function alertCancelOK() {
     t2.value,
     m2.value,
     `
-    <button onclick="closeAlert(this)">キャンセル</button>
+    <button class="blue" onclick="closeAlert(this)">キャンセル</button>
     <button class="blue" onclick="closeAlert(this)">OK</button>
     `
   );

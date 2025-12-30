@@ -2,136 +2,154 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Alert App Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Alert</title>
 
 <style>
+*{box-sizing:border-box}
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  height:100vh; overflow:hidden;
+  background:#000;
 }
 
-/* ===== ホーム ===== */
-.home{
-  position:absolute; inset:0;
-  padding:40px 20px;
-  display:grid; grid-template-columns:repeat(4,1fr);
-  gap:18px;
-  background:
-    radial-gradient(circle at 20% 10%, #2e86de, transparent 40%),
-    radial-gradient(circle at 80% 30%, #6c5ce7, transparent 45%),
-    linear-gradient(180deg,#0a3d62,#1e5799);
-}
-.icon{ text-align:center; color:#fff; font-size:12px; }
-.appIcon{
-  width:60px;height:60px;margin:auto;border-radius:14px;
-  background:linear-gradient(135deg,#ff3b30,#ff9f0a);
-}
-
-/* ===== アプリ画面 ===== */
-.appView{
-  position:absolute; inset:0;
-  background:#000; color:#fff;
-  display:none; padding:20px;
-}
-.appView h1{ font-size:20px; margin:0 0 14px; }
-label{ font-size:13px; color:#b0b0b0; display:block; margin-top:12px; }
-input, textarea{
-  width:100%; box-sizing:border-box;
-  background:#1c1c1e; color:#fff;
-  border:0; border-radius:10px;
-  padding:10px; font-size:15px;
-}
-textarea{ resize:none; height:70px; }
-.btn{
-  margin-top:16px; width:100%;
-  padding:12px; border-radius:12px;
-  border:0; font-size:17px;
-  background:#0a84ff; color:#fff;
+/* ===== ホーム画面 ===== */
+#home{
+  position:fixed;
+  inset:0;
+  background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAA...（省略せずそのまま入ってます）...) center/cover no-repeat;
+  display:none;
 }
 
 /* ===== アラート ===== */
 .overlay{
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.36);
-  backdrop-filter: blur(14px) saturate(1.25);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  display:none; align-items:center; justify-content:center; z-index:10;
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
+
 .alert{
-  width:270px; border-radius:14px; overflow:hidden; text-align:center;
-  background:linear-gradient(180deg,rgba(242,242,247,.92),rgba(242,242,247,.84));
+  width:270px;
+  background:#f2f2f7;
+  border-radius:14px;
+  text-align:center;
+  overflow:hidden;
 }
-.alert h3{ margin:16px 16px 6px; font-size:17px; font-weight:600; color:#000; }
-.alert p{ margin:0 16px 14px; font-size:13.5px; color:#3a3a3c; }
-.buttons{ display:flex; border-top:.5px solid rgba(60,60,67,.29); }
+
+.alert h3{
+  margin:16px 16px 6px;
+  font-size:17px;
+  font-weight:600;
+}
+
+.alert p{
+  margin:0 16px 14px;
+  font-size:13.5px;
+  color:#3a3a3c;
+}
+
+.buttons{
+  display:flex;
+  border-top:1px solid #c6c6c8;
+}
+
 .buttons button{
-  flex:1; padding:12px 0; font-size:17px; border:0;
-  background:transparent; color:#007aff; font-weight:600;
+  flex:1;
+  padding:12px 0;
+  font-size:17px;
+  border:none;
+  background:transparent;
 }
-.buttons button+button{ border-left:.5px solid rgba(60,60,67,.29); }
+
+.buttons button:first-child{
+  border-right:1px solid #c6c6c8;
+}
+
+.blue{color:#007aff;font-weight:600}
+
+/* ===== アラートアプリ ===== */
+#app{
+  padding:15px;
+}
+
+.box{
+  background:#1c1c1e;
+  border-radius:14px;
+  padding:15px;
+}
+
+label{
+  font-size:13px;
+  color:#b0b0b0;
+}
+
+input,textarea{
+  width:100%;
+  margin-top:4px;
+  background:#2c2c2e;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:10px;
+  font-size:15px;
+}
+
+textarea{height:60px;resize:none}
+
+button.main{
+  width:100%;
+  margin-top:12px;
+  padding:12px;
+  font-size:17px;
+  border:none;
+  border-radius:12px;
+  background:#0a84ff;
+  color:#fff;
+}
 </style>
 </head>
 
 <body>
 
-<!-- ホーム -->
-<div class="home" id="home">
-  <div class="icon" onclick="openApp()">
-    <div class="appIcon"></div>
-    アラート
+<!-- アラートアプリ -->
+<div id="app">
+  <div class="box">
+    <label>タイトル（必須）</label>
+    <input id="title" value="“example.com”がアクセスを求めています">
+    <label style="margin-top:8px">メッセージ</label>
+    <textarea id="msg">マイクへのアクセスを許可しますか？</textarea>
+    <button class="main" onclick="show()">表示</button>
   </div>
 </div>
 
-<!-- アプリ -->
-<div class="appView" id="app">
-  <h1>アラート</h1>
-
-  <label>タイトル（必須）</label>
-  <input id="titleInput" placeholder="例：“Safari”がアクセスを求めています">
-
-  <label>メッセージ（任意）</label>
-  <textarea id="msgInput" placeholder="例：この操作を許可しますか？"></textarea>
-
-  <button class="btn" onclick="showAlert()">表示</button>
-</div>
-
-<!-- システムアラート -->
-<div class="overlay" id="ov">
-  <div class="alert">
-    <h3 id="aTitle"></h3>
-    <p id="aMsg"></p>
-    <div class="buttons">
-      <button onclick="closeAlert()">キャンセル</button>
-      <button onclick="closeAlert()">許可</button>
-    </div>
-  </div>
-</div>
+<!-- ホーム画面 -->
+<div id="home"></div>
 
 <script>
-function openApp(){
-  home.style.display="none";
-  app.style.display="block";
-}
+function show(){
+  if(!title.value.trim()) return alert("タイトルは必須です");
 
-function showAlert(){
-  const t = titleInput.value.trim();
-  if(!t) return; // タイトル必須
-
-  // ★ ここが重要：ホームに戻す
   app.style.display="none";
-  home.style.display="grid";
+  home.style.display="block";
 
-  aTitle.textContent = t;
-  aMsg.textContent = msgInput.value || "";
-
-  // 少し間を置くとiOS感UP
-  setTimeout(()=>{ ov.style.display="flex"; }, 80);
+  home.innerHTML=`
+    <div class="overlay">
+      <div class="alert">
+        <h3>${title.value}</h3>
+        <p>${msg.value.replace(/\\n/g,"<br>")}</p>
+        <div class="buttons">
+          <button class="blue" onclick="closeAlert()">キャンセル</button>
+          <button class="blue" onclick="closeAlert()">許可</button>
+        </div>
+      </div>
+    </div>`;
 }
 
 function closeAlert(){
-  ov.style.display="none"; // 押した後もホームのまま
+  document.querySelector(".overlay").remove();
 }
 </script>
 

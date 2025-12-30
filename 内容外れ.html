@@ -9,16 +9,14 @@
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  height:100vh;
-  overflow:hidden;
+  height:100vh; overflow:hidden;
 }
 
 /* ===== ホーム ===== */
 .home{
   position:absolute; inset:0;
   padding:40px 20px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
+  display:grid; grid-template-columns:repeat(4,1fr);
   gap:18px;
   background:
     radial-gradient(circle at 20% 10%, #2e86de, transparent 40%),
@@ -37,9 +35,7 @@ body{
   background:#000; color:#fff;
   display:none; padding:20px;
 }
-.appView h1{
-  font-size:20px; margin:0 0 14px;
-}
+.appView h1{ font-size:20px; margin:0 0 14px; }
 label{ font-size:13px; color:#b0b0b0; display:block; margin-top:12px; }
 input, textarea{
   width:100%; box-sizing:border-box;
@@ -67,12 +63,8 @@ textarea{ resize:none; height:70px; }
   width:270px; border-radius:14px; overflow:hidden; text-align:center;
   background:linear-gradient(180deg,rgba(242,242,247,.92),rgba(242,242,247,.84));
 }
-.alert h3{
-  margin:16px 16px 6px; font-size:17px; font-weight:600; color:#000;
-}
-.alert p{
-  margin:0 16px 14px; font-size:13.5px; color:#3a3a3c;
-}
+.alert h3{ margin:16px 16px 6px; font-size:17px; font-weight:600; color:#000; }
+.alert p{ margin:0 16px 14px; font-size:13.5px; color:#3a3a3c; }
 .buttons{ display:flex; border-top:.5px solid rgba(60,60,67,.29); }
 .buttons button{
   flex:1; padding:12px 0; font-size:17px; border:0;
@@ -127,13 +119,19 @@ function showAlert(){
   const t = titleInput.value.trim();
   if(!t) return; // タイトル必須
 
+  // ★ ここが重要：ホームに戻す
+  app.style.display="none";
+  home.style.display="grid";
+
   aTitle.textContent = t;
   aMsg.textContent = msgInput.value || "";
-  ov.style.display="flex";
+
+  // 少し間を置くとiOS感UP
+  setTimeout(()=>{ ov.style.display="flex"; }, 80);
 }
 
 function closeAlert(){
-  ov.style.display="none"; // アプリ画面に戻る
+  ov.style.display="none"; // 押した後もホームのまま
 }
 </script>
 

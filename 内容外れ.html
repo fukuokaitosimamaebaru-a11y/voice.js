@@ -3,160 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>iOS Demo</title>
+<title>iOS Alert Builder</title>
+
 <style>
-:root{
-  --bg:#f2f2f7; --card:#ffffff; --txt:#000; --sub:#3a3a3c;
-  --line:#c6c6c8; --blue:#007aff; --red:#ff3b30; --overlay:rgba(0,0,0,.38);
-}
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#000; --card:#1c1c1e; --txt:#fff; --sub:#b0b0b0;
-    --line:#2c2c2e; --overlay:rgba(0,0,0,.55);
-  }
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:linear-gradient(180deg,#0a3d62,#1e5799);color:#fff;overflow:hidden}
-
-/* ===== Status Bar ===== */
-.status{position:fixed;top:0;left:0;right:0;height:24px;padding:0 10px;display:flex;align-items:center;justify-content:space-between;font-size:12px}
-.icons span{margin-left:6px}
-
-/* ===== Home ===== */
-.home{padding:36px 20px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.icon{text-align:center;font-size:12px;user-select:none}
-.app{width:60px;height:60px;margin:auto;border-radius:14px;background:rgba(255,255,255,.25)}
-.app.dont{background:linear-gradient(135deg,#ff3b30,#ff9500)}
-
-/* ===== Builder ===== */
-.builder{position:fixed;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);padding:10px}
-.builder h4{margin:0 0 6px;font-size:13px}
-.builder input,.builder textarea,.builder select{
-  width:100%;border:none;border-radius:8px;padding:8px;font-size:14px;margin-bottom:6px
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #000;
+  color: #fff;
 }
 
-/* ===== Overlay & Alert ===== */
-.overlay{position:fixed;inset:0;background:var(--overlay);display:none;align-items:center;justify-content:center;z-index:9}
-.alert{width:270px;background:var(--bg);border-radius:14px;text-align:center;overflow:hidden}
-.alert h3{margin:16px 16px 6px;font-size:17px;font-weight:600;color:var(--txt)}
-.alert p{margin:0 16px 14px;font-size:13.5px;color:var(--sub)}
-.buttons{display:flex;border-top:1px solid var(--line)}
-.buttons button{flex:1;padding:12px 0;font-size:17px;border:none;background:transparent;color:var(--txt)}
-.buttons button+button{border-left:1px solid var(--line)}
-.blue{color:var(--blue);font-weight:600}
-.red{color:var(--red);font-weight:600}
+/* ===== 設定UI ===== */
+.container {
+  padding: 15px;
+}
 
-/* ===== Face ID ===== */
-.face{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10;align-items:center;justify-content:center}
-.facebox{width:220px;background:var(--bg);border-radius:16px;padding:16px;text-align:center}
-.ring{width:90px;height:90px;border-radius:50%;border:3px solid var(--blue);margin:10px auto;animation:scan 1.6s linear infinite}
-@keyframes scan{to{transform:rotate(360deg)}}
+.type {
+  background: #1c1c1e;
+  border-radius: 14px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.type h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+
+label {
+  font-size: 13px;
+  color: #b0b0b0;
+  display: block;
+  margin: 6px 0 3px;
+}
+
+input, textarea {
+  width: 100%;
+  background: #2c2c2e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: none;
+  height: 55px;
+}
+
+button.main {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  font-size: 17px;
+  border-radius: 12px;
+  border: none;
+  background: #0a84ff;
+  color: white;
+}
+
+/* ===== iOSアラート ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.38);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.alert {
+  width: 270px;
+  background: #f2f2f7;
+  border-radius: 14px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.alert h3 {
+  margin: 16px 16px 6px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #000;
+}
+
+.alert p {
+  margin: 0 16px 14px;
+  font-size: 13.5px;
+  color: #3a3a3c;
+}
+
+.buttons {
+  display: flex;
+  border-top: 1px solid #c6c6c8;
+}
+
+.buttons.vertical {
+  flex-direction: column;
+}
+
+.buttons button {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 17px;
+  border: none;
+  background: transparent;
+}
+
+.buttons button:not(:last-child) {
+  border-right: 1px solid #c6c6c8;
+}
+
+.blue { color: #007aff; font-weight: 600; }
+.red  { color: #ff3b30; font-weight: 600; }
 </style>
 </head>
 
 <body>
 
-<!-- Status -->
-<div class="status">
-  <div id="time">9:41</div>
-  <div class="icons"><span>📶</span><span>🔋100%</span></div>
+<div class="container">
+
+<!-- 1 許可 / 拒否 -->
+<div class="type">
+  <h2>① 許可 / 拒否</h2>
+  <label>タイトル</label>
+  <input id="t1" value="“Safari”がアクセスを求めています">
+  <label>メッセージ</label>
+  <textarea id="m1">この操作を許可しますか？</textarea>
+  <button class="main" onclick="alertAllowDeny()">表示</button>
 </div>
 
-<!-- Home -->
-<div class="home">
-  <div class="icon"><div class="app"></div>Safari</div>
-  <div class="icon"><div class="app"></div>設定</div>
-  <div class="icon"><div class="app"></div>写真</div>
-  <div class="icon"><div class="app"></div>カメラ</div>
-  <div class="icon" onclick="openDont()"><div class="app dont"></div>押すな</div>
+<!-- 2 キャンセル / OK -->
+<div class="type">
+  <h2>② キャンセル / OK</h2>
+  <label>タイトル</label>
+  <input id="t2" value="確認">
+  <label>メッセージ</label>
+  <textarea id="m2">この操作を実行しますか？</textarea>
+  <button class="main" onclick="alertCancelOK()">表示</button>
 </div>
 
-<!-- Builder -->
-<div class="builder">
-  <h4>アラート設定（保存されます）</h4>
-  <select id="preset">
-    <option value="custom">カスタム</option>
-    <option value="mdm">MDM管理iPad警告</option>
-  </select>
-  <input id="title" placeholder="タイトル">
-  <textarea id="msg" rows="2" placeholder="メッセージ"></textarea>
-  <select id="auth">
-    <option value="none">認証なし</option>
-    <option value="face">Face ID / Touch ID</option>
-  </select>
+<!-- 3 わかりました -->
+<div class="type">
+  <h2>③ わかりました</h2>
+  <label>タイトル</label>
+  <input id="t3" value="お知らせ">
+  <label>メッセージ</label>
+  <textarea id="m3">設定が完了しました。</textarea>
+  <button class="main" onclick="alertOK()">表示</button>
 </div>
 
-<!-- Alert -->
-<div class="overlay" id="overlay">
-  <div class="alert">
-    <h3 id="aTitle"></h3>
-    <p id="aMsg"></p>
-    <div class="buttons">
-      <button class="red" onclick="closeAlert()">拒否</button>
-      <button class="blue" onclick="closeAlert()">OK</button>
-    </div>
-  </div>
-</div>
-
-<!-- Face ID -->
-<div class="face" id="face">
-  <div class="facebox">
-    <div class="ring"></div>
-    <div>Face ID</div>
-    <small>確認中…</small>
-  </div>
 </div>
 
 <script>
-/* ===== 時刻 ===== */
-setInterval(()=>{const d=new Date();time.textContent=d.toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});},1000);
+function showAlert(title, message, buttons, vertical=false) {
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
 
-/* ===== 保存 ===== */
-const $=id=>document.getElementById(id);
-const KEY='ios-demo';
-function load(){
-  const s=JSON.parse(localStorage.getItem(KEY)||'{}');
-  title.value=s.title||'“Safari”がアクセスを求めています';
-  msg.value=s.msg||'この操作を許可しますか？';
-  preset.value=s.preset||'custom';
-  auth.value=s.auth||'none';
-}
-function save(){
-  localStorage.setItem(KEY,JSON.stringify({
-    title:title.value,msg:msg.value,preset:preset.value,auth:auth.value
-  }));
-}
-['title','msg','preset','auth'].forEach(id=>$(id).addEventListener('input',save));
+  overlay.innerHTML = `
+    <div class="alert">
+      <h3>${title}</h3>
+      <p>${message.replace(/\n/g,"<br>")}</p>
+      <div class="buttons ${vertical ? "vertical" : ""}">
+        ${buttons}
+      </div>
+    </div>
+  `;
 
-/* ===== Preset ===== */
-preset.onchange=()=>{
-  if(preset.value==='mdm'){
-    title.value='このiPadは管理されています';
-    msg.value='このiPadは組織によって管理されています。\n一部の設定や機能が制限されます。';
-  }
-  save();
-};
-
-/* ===== Alert Flow ===== */
-function openDont(){
-  aTitle.textContent=title.value;
-  aMsg.innerHTML=msg.value.replace(/\n/g,'<br>');
-  overlay.style.display='flex';
-  if(auth.value==='face'){ showFace(); }
-}
-function closeAlert(){ overlay.style.display='none'; }
-
-/* ===== Face ID ===== */
-function showFace(){
-  face.style.display='flex';
-  setTimeout(()=>face.style.display='none',1800);
+  document.body.appendChild(overlay);
 }
 
-/* 初期 */
-load();
+function closeAlert(btn) {
+  btn.closest(".overlay").remove();
+}
 
-/* 背景操作防止 */
-document.addEventListener('touchmove',e=>e.preventDefault(),{passive:false});
+/* ① 許可 / 拒否 */
+function alertAllowDeny() {
+  showAlert(
+    t1.value,
+    m1.value,
+    `
+    <button class="red" onclick="closeAlert(this)">拒否</button>
+    <button class="blue" onclick="closeAlert(this)">許可</button>
+    `
+  );
+}
+
+/* ② キャンセル / OK */
+function alertCancelOK() {
+  showAlert(
+    t2.value,
+    m2.value,
+    `
+    <button onclick="closeAlert(this)">キャンセル</button>
+    <button class="blue" onclick="closeAlert(this)">OK</button>
+    `
+  );
+}
+
+/* ③ わかりました */
+function alertOK() {
+  showAlert(
+    t3.value,
+    m3.value,
+    `
+    <button class="blue" onclick="closeAlert(this)">わかりました</button>
+    `,
+    true
+  );
+}
 </script>
+
 </body>
 </html>

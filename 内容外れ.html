@@ -1,155 +1,55 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>iOS Alert</title>
-
+<!DOCTYPE html><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <style>
-/* ===== iOS風ホーム画面背景 ===== */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  height: 100vh;
-  overflow: hidden;
-  background:
-    linear-gradient(180deg, #0a3d62, #1e5799);
-}
-
-.home {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  padding: 30px 20px;
-}
-
-.icon {
-  text-align: center;
-  color: white;
-  font-size: 12px;
-}
-
-.icon div {
-  width: 60px;
-  height: 60px;
-  margin: auto;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.25);
-}
-
-/* ===== 完全ブロック用オーバーレイ ===== */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.38);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-
-  /* 重要：すべての操作を吸収 */
-  pointer-events: all;
-}
-
-/* ===== iOSアラート本体 ===== */
-.alert {
-  width: 270px;
-  background: #f2f2f7;
-  border-radius: 14px;
-  text-align: center;
-  overflow: hidden;
-}
-
-.alert h3 {
-  margin: 16px 16px 6px;
-  font-size: 17px;
-  font-weight: 600;
-  color: #000;
-}
-
-.alert p {
-  margin: 0 16px 14px;
-  font-size: 13.5px;
-  color: #3a3a3c;
-}
-
-.buttons {
-  display: flex;
-  border-top: 1px solid #c6c6c8;
-}
-
-.buttons.vertical {
-  flex-direction: column;
-}
-
-.buttons button {
-  flex: 1;
-  padding: 12px 0;
-  font-size: 17px;
-  border: none;
-  background: transparent;
-}
-
-.buttons button:not(:last-child) {
-  border-right: 1px solid #c6c6c8;
-}
-
-.blue { color: #007aff; font-weight: 600; }
-.red  { color: #ff3b30; font-weight: 600; }
+:root{--b:#f2f2f7;--t:#000;--s:#3a3a3c;--l:#c6c6c8;--o:rgba(0,0,0,.38)}
+@media(prefers-color-scheme:dark){:root{--b:#1c1c1e;--t:#fff;--s:#b0b0b0;--l:#2c2c2e;--o:rgba(0,0,0,.55)}}
+body{margin:0;font-family:-apple-system;background:#000;overflow:hidden}
+#st{position:fixed;top:0;left:0;right:0;height:24px;color:#fff;
+display:flex;justify-content:space-between;padding:0 10px;font-size:12px}
+#al{position:fixed;inset:0;background:var(--o);display:none;
+align-items:center;justify-content:center}
+#a{width:270px;background:var(--b);border-radius:14px;text-align:center}
+#a h3{margin:16px 16px 6px;font-size:17px;color:var(--t)}
+#a p{margin:0 16px 14px;font-size:13.5px;color:var(--s)}
+#b{display:flex;border-top:1px solid var(--l)}
+#b button{flex:1;border:0;background:0;font-size:17px;padding:12px}
+#b button+button{border-left:1px solid var(--l)}
+.blue{color:#007aff;font-weight:600}.red{color:#ff3b30;font-weight:600}
 </style>
-</head>
 
-<body>
-
-<!-- iOS風ホーム画面 -->
-<div class="home">
-  <div class="icon"><div></div>Safari</div>
-  <div class="icon"><div></div>設定</div>
-  <div class="icon"><div></div>写真</div>
-  <div class="icon"><div></div>カメラ</div>
+<div id="st">
+  <span id="tm"></span>
+  <span>🚫 圏外 🔋<span id="bt"></span>%</span>
 </div>
 
-<!-- ===== 消えないアラート ===== -->
-<div class="overlay" id="overlay">
-  <div class="alert">
-    <h3>“Safari”がアクセスを求めています</h3>
-    <p>
-      この操作を許可しない限り、<br>
-      使用を続行できません。
-    </p>
-
-    <div class="buttons">
-      <button class="red" onclick="deny()">拒否</button>
-      <button class="blue" onclick="allow()">許可</button>
+<div id="al">
+  <div id="a">
+    <h3 id="ti"></h3>
+    <p id="ms"></p>
+    <div id="b">
+      <button class="red" onclick="cl()">拒否</button>
+      <button class="blue" onclick="cl()">OK</button>
     </div>
   </div>
 </div>
 
 <script>
-/* 背景操作を完全禁止 */
-document.addEventListener("touchmove", e => e.preventDefault(), { passive:false });
-document.addEventListener("wheel", e => e.preventDefault(), { passive:false });
-
-function allow() {
-  document.getElementById("overlay").remove();
+/* ===== 設定 ===== */
+const CFG={bat:72,title:"このiPadは管理されています",
+msg:"このiPadは組織によって\n管理されています。"};
+/* ===== 時刻 ===== */
+setInterval(()=>tm.textContent=
+new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'}),1e3);
+/* ===== 保存 ===== */
+let s=JSON.parse(localStorage.iOS||'{}');Object.assign(CFG,s);
+bt.textContent=CFG.bat;ti.textContent=CFG.title;
+ms.innerHTML=CFG.msg.replace(/\n/g,"<br>");
+/* ===== API ===== */
+openAlert=_=>{
+  localStorage.iOS=JSON.stringify(CFG);
+  al.style.display="flex";
 }
-
-function deny() {
-  // 拒否しても消えない（本物っぽさ）
-  alertShake();
-}
-
-/* iOSっぽい軽い拒否演出 */
-function alertShake() {
-  const a = document.querySelector(".alert");
-  a.animate([
-    { transform: "translateX(0)" },
-    { transform: "translateX(-5px)" },
-    { transform: "translateX(5px)" },
-    { transform: "translateX(0)" }
-  ], { duration: 200 });
-}
+cl=_=>al.style.display="none";
+/* 自動表示したいなら */
+openAlert();
 </script>
-
-</body>
-</html>

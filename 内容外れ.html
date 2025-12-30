@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ポップアップ種類</title>
+<style>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #111;
+  color: #fff;
+}
+
+.container {
+  padding: 15px;
+}
+
+.type {
+  background: #222;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.type h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  margin: 8px 0 4px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+textarea {
+  height: 60px;
+  resize: none;
+}
+
+button.main {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  background: #ff3b30;
+  color: white;
+}
+
+.popup {
+  position: fixed;
+  background: white;
+  color: black;
+  width: 270px;
+  padding: 15px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.popup h3 {
+  margin: 0 0 10px;
+}
+
+.popup p {
+  margin: 0 0 15px;
+}
+
+.popup .btns {
+  display: flex;
+  gap: 10px;
+}
+
+.popup button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+}
+
+.allow { background: #34c759; color: white; }
+.deny  { background: #ff3b30; color: white; }
+.cancel{ background: #8e8e93; color: white; }
+.ok    { background: #007aff; color: white; }
+.only  { background: #007aff; color: white; width: 100%; }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- 1. 許可 / 拒否 -->
+<div class="type">
+  <h2>① 許可 / 拒否</h2>
+
+  <label>タイトル</label>
+  <input id="p1-title" value="⚠️ アクセス要求">
+
+  <label>テキスト</label>
+  <textarea id="p1-text">この操作を許可しますか？</textarea>
+
+  <button class="main" onclick="popupAllowDeny()">表示</button>
+</div>
+
+<!-- 2. キャンセル / OK -->
+<div class="type">
+  <h2>② キャンセル / OK</h2>
+
+  <label>タイトル</label>
+  <input id="p2-title" value="確認">
+
+  <label>テキスト</label>
+  <textarea id="p2-text">この操作を実行しますか？</textarea>
+
+  <button class="main" onclick="popupCancelOK()">表示</button>
+</div>
+
+<!-- 3. わかりました -->
+<div class="type">
+  <h2>③ わかりました</h2>
+
+  <label>タイトル</label>
+  <input id="p3-title" value="お知らせ">
+
+  <label>テキスト</label>
+  <textarea id="p3-text">設定が完了しました。</textarea>
+
+  <button class="main" onclick="popupOK()">表示</button>
+</div>
+
+</div>
+
+<script>
+function showPopup(title, text, buttons) {
+  const pop = document.createElement("div");
+  pop.className = "popup";
+
+  pop.innerHTML = `
+    <h3>${title}</h3>
+    <p>${text.replace(/\n/g,"<br>")}</p>
+    <div class="btns">${buttons}</div>
+  `;
+
+  document.body.appendChild(pop);
+}
+
+function popupAllowDeny() {
+  showPopup(
+    document.getElementById("p1-title").value,
+    document.getElementById("p1-text").value,
+    `
+    <button class="allow" onclick="this.closest('.popup').remove()">許可</button>
+    <button class="deny" onclick="this.closest('.popup').remove()">拒否</button>
+    `
+  );
+}
+
+function popupCancelOK() {
+  showPopup(
+    document.getElementById("p2-title").value,
+    document.getElementById("p2-text").value,
+    `
+    <button class="cancel" onclick="this.closest('.popup').remove()">キャンセル</button>
+    <button class="ok" onclick="this.closest('.popup').remove()">OK</button>
+    `
+  );
+}
+
+function popupOK() {
+  showPopup(
+    document.getElementById("p3-title").value,
+    document.getElementById("p3-text").value,
+    `
+    <button class="only" onclick="this.closest('.popup').remove()">わかりました</button>
+    `
+  );
+}
+</script>
+
+</body>
+</html>

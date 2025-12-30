@@ -2,195 +2,152 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ポップアップ種類</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>iOS Alert</title>
+
 <style>
+/* ===== iOS風ホーム画面背景 ===== */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #111;
-  color: #fff;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, #0a3d62, #1e5799);
 }
 
-.container {
-  padding: 15px;
+.home {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  padding: 30px 20px;
 }
 
-.type {
-  background: #222;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
-}
-
-.type h2 {
-  margin: 0 0 10px;
-  font-size: 18px;
-}
-
-label {
-  display: block;
-  font-size: 14px;
-  margin: 8px 0 4px;
-}
-
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  font-size: 15px;
-  box-sizing: border-box;
-}
-
-textarea {
-  height: 60px;
-  resize: none;
-}
-
-button.main {
-  width: 100%;
-  margin-top: 10px;
-  padding: 14px;
-  font-size: 18px;
-  border-radius: 12px;
-  border: none;
-  background: #ff3b30;
+.icon {
+  text-align: center;
   color: white;
+  font-size: 12px;
 }
 
-.popup {
-  position: fixed;
-  background: white;
-  color: black;
-  width: 270px;
-  padding: 15px;
+.icon div {
+  width: 60px;
+  height: 60px;
+  margin: auto;
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
+  background: rgba(255,255,255,0.25);
 }
 
-.popup h3 {
-  margin: 0 0 10px;
-}
-
-.popup p {
-  margin: 0 0 15px;
-}
-
-.popup .btns {
+/* ===== 完全ブロック用オーバーレイ ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.38);
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+
+  /* 重要：すべての操作を吸収 */
+  pointer-events: all;
 }
 
-.popup button {
+/* ===== iOSアラート本体 ===== */
+.alert {
+  width: 270px;
+  background: #f2f2f7;
+  border-radius: 14px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.alert h3 {
+  margin: 16px 16px 6px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #000;
+}
+
+.alert p {
+  margin: 0 16px 14px;
+  font-size: 13.5px;
+  color: #3a3a3c;
+}
+
+.buttons {
+  display: flex;
+  border-top: 1px solid #c6c6c8;
+}
+
+.buttons.vertical {
+  flex-direction: column;
+}
+
+.buttons button {
   flex: 1;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px 0;
+  font-size: 17px;
   border: none;
-  font-size: 15px;
+  background: transparent;
 }
 
-.allow { background: #34c759; color: white; }
-.deny  { background: #ff3b30; color: white; }
-.cancel{ background: #8e8e93; color: white; }
-.ok    { background: #007aff; color: white; }
-.only  { background: #007aff; color: white; width: 100%; }
+.buttons button:not(:last-child) {
+  border-right: 1px solid #c6c6c8;
+}
 
+.blue { color: #007aff; font-weight: 600; }
+.red  { color: #ff3b30; font-weight: 600; }
 </style>
 </head>
+
 <body>
 
-<div class="container">
-
-<!-- 1. 許可 / 拒否 -->
-<div class="type">
-  <h2>① 許可 / 拒否</h2>
-
-  <label>タイトル</label>
-  <input id="p1-title" value="⚠️ アクセス要求">
-
-  <label>テキスト</label>
-  <textarea id="p1-text">この操作を許可しますか？</textarea>
-
-  <button class="main" onclick="popupAllowDeny()">表示</button>
+<!-- iOS風ホーム画面 -->
+<div class="home">
+  <div class="icon"><div></div>Safari</div>
+  <div class="icon"><div></div>設定</div>
+  <div class="icon"><div></div>写真</div>
+  <div class="icon"><div></div>カメラ</div>
 </div>
 
-<!-- 2. キャンセル / OK -->
-<div class="type">
-  <h2>② キャンセル / OK</h2>
+<!-- ===== 消えないアラート ===== -->
+<div class="overlay" id="overlay">
+  <div class="alert">
+    <h3>“Safari”がアクセスを求めています</h3>
+    <p>
+      この操作を許可しない限り、<br>
+      使用を続行できません。
+    </p>
 
-  <label>タイトル</label>
-  <input id="p2-title" value="確認">
-
-  <label>テキスト</label>
-  <textarea id="p2-text">この操作を実行しますか？</textarea>
-
-  <button class="main" onclick="popupCancelOK()">表示</button>
-</div>
-
-<!-- 3. わかりました -->
-<div class="type">
-  <h2>③ わかりました</h2>
-
-  <label>タイトル</label>
-  <input id="p3-title" value="お知らせ">
-
-  <label>テキスト</label>
-  <textarea id="p3-text">設定が完了しました。</textarea>
-
-  <button class="main" onclick="popupOK()">表示</button>
-</div>
-
+    <div class="buttons">
+      <button class="red" onclick="deny()">拒否</button>
+      <button class="blue" onclick="allow()">許可</button>
+    </div>
+  </div>
 </div>
 
 <script>
-function showPopup(title, text, buttons) {
-  const pop = document.createElement("div");
-  pop.className = "popup";
+/* 背景操作を完全禁止 */
+document.addEventListener("touchmove", e => e.preventDefault(), { passive:false });
+document.addEventListener("wheel", e => e.preventDefault(), { passive:false });
 
-  pop.innerHTML = `
-    <h3>${title}</h3>
-    <p>${text.replace(/\n/g,"<br>")}</p>
-    <div class="btns">${buttons}</div>
-  `;
-
-  document.body.appendChild(pop);
+function allow() {
+  document.getElementById("overlay").remove();
 }
 
-function popupAllowDeny() {
-  showPopup(
-    document.getElementById("p1-title").value,
-    document.getElementById("p1-text").value,
-    `
-    <button class="allow" onclick="this.closest('.popup').remove()">許可</button>
-    <button class="deny" onclick="this.closest('.popup').remove()">拒否</button>
-    `
-  );
+function deny() {
+  // 拒否しても消えない（本物っぽさ）
+  alertShake();
 }
 
-function popupCancelOK() {
-  showPopup(
-    document.getElementById("p2-title").value,
-    document.getElementById("p2-text").value,
-    `
-    <button class="cancel" onclick="this.closest('.popup').remove()">キャンセル</button>
-    <button class="ok" onclick="this.closest('.popup').remove()">OK</button>
-    `
-  );
-}
-
-function popupOK() {
-  showPopup(
-    document.getElementById("p3-title").value,
-    document.getElementById("p3-text").value,
-    `
-    <button class="only" onclick="this.closest('.popup').remove()">わかりました</button>
-    `
-  );
+/* iOSっぽい軽い拒否演出 */
+function alertShake() {
+  const a = document.querySelector(".alert");
+  a.animate([
+    { transform: "translateX(0)" },
+    { transform: "translateX(-5px)" },
+    { transform: "translateX(5px)" },
+    { transform: "translateX(0)" }
+  ], { duration: 200 });
 }
 </script>
 

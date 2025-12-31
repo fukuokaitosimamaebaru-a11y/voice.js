@@ -47,16 +47,22 @@ body{
   background:#000;
 }
 h1{margin:0 0 20px;font-size:20px;}
-.back{
-  position:absolute; top:12px; left:12px;
-  font-size:16px;
-  color:#0a84ff;
+
+/* ===== ホームボタン ===== */
+#homeBtn{
+  position:fixed;
+  right:18px;
+  top:50%;
+  transform:translateY(-50%);
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:#111;   /* 実機のガラス感 */
+  border:none;       /* 黒い縁 完全削除 */
+  z-index:9999;
 }
-button{
-  padding:12px;
-  border-radius:12px;
-  border:none;
-  font-size:16px;
+#homeBtn:active{
+  background:#222;
 }
 </style>
 </head>
@@ -81,14 +87,12 @@ button{
 
 <!-- ===== 時計 ===== -->
 <div class="app" id="clock">
-  <div class="back" onclick="goHome()">ホーム</div>
   <h1>時計</h1>
   <div id="time" style="font-size:48px;margin-top:40px;"></div>
 </div>
 
 <!-- ===== 計算機 ===== -->
 <div class="app" id="calc">
-  <div class="back" onclick="goHome()">ホーム</div>
   <h1>計算機</h1>
   <input id="calcDisp" readonly style="width:100%;font-size:28px;text-align:right;">
   <div style="margin-top:10px;">
@@ -102,22 +106,24 @@ button{
 
 <!-- ===== コンパス ===== -->
 <div class="app" id="compass">
-  <div class="back" onclick="goHome()">ホーム</div>
   <h1>コンパス</h1>
   <div id="deg" style="font-size:36px;margin-top:40px;">0°</div>
 </div>
 
 <!-- ===== ホールマイク ===== -->
 <div class="app" id="mic">
-  <div class="back" onclick="goHome()">ホーム</div>
   <h1>ホールマイク</h1>
   <button onclick="startEcho()">🎤 開始</button>
 </div>
+
+<!-- ===== ホームボタン ===== -->
+<button id="homeBtn" onclick="goHome()"></button>
 
 <script>
 /* ===== 共通 ===== */
 function openApp(id){
   home.style.display="none";
+  document.querySelectorAll(".app").forEach(a=>a.style.display="none");
   document.getElementById(id).style.display="block";
 }
 function goHome(){
@@ -127,8 +133,7 @@ function goHome(){
 
 /* ===== 時計 ===== */
 setInterval(()=>{
-  const d=new Date();
-  time.textContent=d.toLocaleTimeString("ja-JP");
+  time.textContent=new Date().toLocaleTimeString("ja-JP");
 },1000);
 
 /* ===== 計算機 ===== */

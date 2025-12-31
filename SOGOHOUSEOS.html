@@ -3,183 +3,303 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>SOGO GAME PACK</title>
+<title>SOGOHOUSE Ultra System</title>
 
 <style>
-body{
-  margin:0;background:#000;color:#fff;
-  font-family:-apple-system;overflow:hidden;
+/* =========================================================
+   GLOBAL BASE STYLE
+========================================================= */
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  overflow:hidden;
 }
 
-/* ===== ホーム ===== */
+/* =========================================================
+   HOME
+========================================================= */
 #home{
-  position:absolute;inset:0;
+  position:absolute;
+  inset:0;
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:14px;padding:20px;
-  background:linear-gradient(#0a3d62,#1e5799);
+  gap:18px;
+  padding:40px 20px;
+  background:
+    radial-gradient(circle at 20% 10%, #2e86de, transparent 40%),
+    radial-gradient(circle at 80% 30%, #6c5ce7, transparent 45%),
+    linear-gradient(180deg,#0a3d62,#1e5799);
 }
-.icon{text-align:center;font-size:11px}
-.icon div{
-  width:60px;height:60px;margin:auto;
+.icon{
+  text-align:center;
+  color:#fff;
+  font-size:12px;
+}
+.appIcon{
+  width:60px;
+  height:60px;
   border-radius:14px;
+  margin:auto;
   background:linear-gradient(135deg,#ff3b30,#ff9f0a);
 }
 
-/* ===== ゲーム画面 ===== */
+/* =========================================================
+   APP COMMON
+========================================================= */
 .app{
-  position:absolute;inset:0;
-  display:none;padding:10px;
+  position:absolute;
+  inset:0;
+  display:none;
+  background:#000;
+  color:#fff;
+  padding:20px;
 }
-.back{
-  position:absolute;top:10px;left:10px;
-  background:#333;color:#fff;
-  padding:6px 10px;border-radius:8px;
-}
-canvas{
-  background:#111;border-radius:12px;
-  display:block;margin:20px auto;
+.app h1{
+  margin:0 0 12px;
+  font-size:20px;
 }
 
-/* ===== iOS風アラート ===== */
-.overlay{
-  position:fixed;inset:0;
+/* =========================================================
+   ALERT OVERLAY
+========================================================= */
+#overlay{
+  position:fixed;
+  inset:0;
   background:rgba(0,0,0,.36);
-  backdrop-filter: blur(14px);
-  display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(14px);
+  display:none;
+  align-items:center;
+  justify-content:center;
   z-index:999;
 }
 .alert{
-  width:270px;border-radius:14px;
-  background:#f2f2f7;color:#000;
-  text-align:center;overflow:hidden;
+  width:270px;
+  border-radius:14px;
+  background:#f2f2f7;
+  text-align:center;
+  overflow:hidden;
 }
 .alert h3{
-  margin:16px 16px 6px;font-size:17px;
+  margin:16px 16px 6px;
+  font-size:17px;
+  font-weight:600;
+  color:#000;
 }
 .alert p{
-  margin:0 16px 14px;font-size:13.5px;
+  margin:0 16px 14px;
+  font-size:13.5px;
+  color:#3a3a3c;
 }
-.buttons{
-  display:flex;border-top:1px solid #ccc;
+.alert .buttons{
+  display:flex;
+  border-top:1px solid #c6c6c8;
 }
-.buttons button{
-  flex:1;padding:12px 0;
-  font-size:17px;border:0;background:none;
+.alert button{
+  flex:1;
+  border:0;
+  background:none;
+  padding:12px 0;
+  font-size:17px;
+  color:#007aff;
+  font-weight:600;
 }
-.blue{color:#007aff;font-weight:600}
+.alert button+button{
+  border-left:1px solid #c6c6c8;
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+.settingRow{
+  display:flex;
+  justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid #333;
+}
+.switch{
+  width:44px;
+  height:26px;
+  border-radius:13px;
+  background:#444;
+  position:relative;
+}
+.switch.on{ background:#34c759; }
+.switch::after{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  background:#fff;
+  border-radius:50%;
+  top:2px;
+  left:2px;
+}
+.switch.on::after{ left:20px; }
+
+/* =========================================================
+   GAME CANVAS
+========================================================= */
+canvas{
+  background:#111;
+  border-radius:12px;
+}
+
+/* ========================================================= */
 </style>
 </head>
 
 <body>
 
-<!-- ===== ホーム ===== -->
-<div id="home"></div>
-
-<!-- ===== ゲーム共通 ===== -->
-<div id="game" class="app">
-  <div class="back" onclick="goHome()">← ホーム</div>
-  <h2 id="gTitle"></h2>
-  <canvas id="cv" width="320" height="320"></canvas>
-  <p id="info"></p>
-  <button id="btn1"></button>
-  <button id="btn2"></button>
+<!-- ===================== HOME ===================== -->
+<div id="home">
+  <div class="icon" onclick="openApp('alertApp')">
+    <div class="appIcon"></div>アラート
+  </div>
+  <div class="icon" onclick="openApp('slitherApp')">
+    <div class="appIcon"></div>スリザリオ
+  </div>
+  <div class="icon" onclick="openApp('potatoApp')">
+    <div class="appIcon"></div>ポテト
+  </div>
+  <div class="icon" onclick="openApp('settingsApp')">
+    <div class="appIcon"></div>設定
+  </div>
 </div>
 
-<!-- ===== アラート ===== -->
-<div class="overlay" id="ov">
+<!-- ===================== ALERT APP ===================== -->
+<div class="app" id="alertApp">
+  <h1>アラート</h1>
+  <input id="alertTitle" placeholder="タイトル（必須）"><br><br>
+  <textarea id="alertMsg" placeholder="メッセージ"></textarea><br><br>
+  <button onclick="showSystemAlert()">表示</button>
+</div>
+
+<!-- ===================== SLITHER ===================== -->
+<div class="app" id="slitherApp">
+  <h1>スリザリオ</h1>
+  <canvas id="slitherCanvas" width="300" height="300"></canvas>
+</div>
+
+<!-- ===================== POTATO ===================== -->
+<div class="app" id="potatoApp">
+  <h1>ポテト職人</h1>
+  <button onclick="fry()">揚げる</button>
+  <button onclick="season()">コンソメ</button>
+  <div id="potatoScore">0</div>
+</div>
+
+<!-- ===================== SETTINGS ===================== -->
+<div class="app" id="settingsApp">
+  <h1>設定</h1>
+  <div class="settingRow">
+    スリザリオ 黒画面
+    <div class="switch" id="swSlither" onclick="toggle('slither')"></div>
+  </div>
+  <div class="settingRow">
+    ポテト 黒画面
+    <div class="switch" id="swPotato" onclick="toggle('potato')"></div>
+  </div>
+</div>
+
+<!-- ===================== ALERT ===================== -->
+<div id="overlay">
   <div class="alert">
     <h3 id="aTitle"></h3>
     <p id="aMsg"></p>
     <div class="buttons">
-      <button class="blue" onclick="closeAlert()">キャンセル</button>
+      <button onclick="closeAlert()">キャンセル</button>
       <button onclick="closeAlert()">許可</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ===== ゲーム一覧 ===== */
-const games=[
- "🍟 ポテト職人","🐍 スリザリオ風","❄️ ホワサバ風",
- "🧱 マイクラ風","🧩 テトリス風","📦 倉庫番",
- "🐍 ヘビゲーム","🎮 バトリングクラシック",
- "🐟 フィッシュ育成","🍟 ポテト工場",
- "❄️ サバイバル追加","🎨 顔ヨッシー／マリオ"
-];
+/* =========================================================
+   STATE MANAGEMENT
+========================================================= */
+let currentApp=null;
+const settings={
+  slitherBlack:false,
+  potatoBlack:false
+};
 
-const home=document.getElementById("home");
-const game=document.getElementById("game");
-const cv=document.getElementById("cv");
-const ctx=cv.getContext("2d");
-
-/* ===== ホーム生成 ===== */
-games.forEach((g,i)=>{
-  const d=document.createElement("div");
-  d.className="icon";
-  d.innerHTML=`<div></div>${g}`;
-  d.onclick=()=>startGame(i);
-  home.appendChild(d);
-});
-
-function goHome(){
-  game.style.display="none";
-  home.style.display="grid";
+function openApp(id){
+  document.querySelectorAll('.app').forEach(a=>a.style.display="none");
+  home.style.display="none";
+  document.getElementById(id).style.display="block";
+  currentApp=id;
 }
 
-/* ===== iOS風アラート ===== */
-function showAlert(t,m){
-  aTitle.textContent=t;
-  aMsg.textContent=m||"";
-  ov.style.display="flex";
+/* =========================================================
+   ALERT ENGINE
+========================================================= */
+function showSystemAlert(){
+  if(!alertTitle.value.trim()) return;
+  home.style.display="grid";
+  document.querySelectorAll('.app').forEach(a=>a.style.display="none");
+  aTitle.textContent=alertTitle.value;
+  aMsg.textContent=alertMsg.value;
+  setTimeout(()=>overlay.style.display="flex",80);
 }
 function closeAlert(){
-  ov.style.display="none";
+  overlay.style.display="none";
 }
 
-/* ===== ゲーム起動 ===== */
-function startGame(id){
-  home.style.display="none";
-  game.style.display="block";
-  gTitle.textContent=games[id];
-  ctx.clearRect(0,0,320,320);
-  btn1.textContent="";
-  btn2.textContent="";
-  info.textContent="";
-
-  /* 🍟 ポテト職人 */
-  if(id===0){
-    let s=0;
-    btn1.textContent="揚げる";
-    btn2.textContent="コンソメ";
-    btn1.onclick=()=>info.textContent="スコア："+(s+=10);
-    btn2.onclick=()=>{
-      s+=100;
-      showAlert("写真に保存してください",
-        "🍟 このビデオは自動的には保存されません");
-      info.textContent="スコア："+s+" ★";
-    };
+/* =========================================================
+   SLITHER CORE
+========================================================= */
+const sCtx=slitherCanvas.getContext("2d");
+let sx=150,sy=150,svx=1.2,svy=1.1;
+function slitherLoop(){
+  if(settings.slitherBlack){
+    sCtx.fillStyle="#000";
+    sCtx.fillRect(0,0,300,300);
+  }else{
+    sCtx.fillStyle="#111";
+    sCtx.fillRect(0,0,300,300);
+    sCtx.fillStyle="#0f0";
+    sCtx.beginPath();
+    sCtx.arc(sx,sy,6,0,Math.PI*2);
+    sCtx.fill();
   }
+  sx+=svx; sy+=svy;
+  requestAnimationFrame(slitherLoop);
+}
+slitherLoop();
 
-  /* 🐍 スリザリオ風 */
-  else if(id===1){
-    let x=160,y=160;
-    setInterval(()=>{
-      ctx.fillStyle="#111";
-      ctx.fillRect(0,0,320,320);
-      x+=Math.random()*6-3;
-      y+=Math.random()*6-3;
-      ctx.fillStyle="#0f0";
-      ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*2);ctx.fill();
-    },50);
-    info.textContent="自動前進・敵AI";
+/* =========================================================
+   POTATO CORE
+========================================================= */
+let score=0;
+function fry(){
+  score+=10;
+  updatePotato();
+}
+function season(){
+  score+=200;
+  updatePotato();
+  showSystemAlert();
+}
+function updatePotato(){
+  potatoScore.textContent=score;
+  potatoApp.style.background=settings.potatoBlack?"#000":"#111";
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+function toggle(type){
+  if(type==="slither"){
+    settings.slitherBlack=!settings.slitherBlack;
+    swSlither.classList.toggle("on");
   }
-
-  /* その他 */
-  else{
-    btn1.textContent="アクション";
-    btn1.onclick=()=>showAlert("確認","ゲーム動作OK");
-    info.textContent="プロトタイプ動作中";
+  if(type==="potato"){
+    settings.potatoBlack=!settings.potatoBlack;
+    swPotato.classList.toggle("on");
   }
 }
 </script>

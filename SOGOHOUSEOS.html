@@ -3,247 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>SOGOHOUSE iOS Home</title>
+<title>Mini iOS</title>
 
 <style>
-html,body{
-  margin:0;height:100%;
-  background:#000;color:#fff;
+body{
+  margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#000;
+  color:#fff;
+  height:100vh;
   overflow:hidden;
 }
 
-/* ===== STATUS BAR ===== */
-.status{
-  height:28px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 10px;
-  font-size:13px;
-  background:rgba(0,0,0,.35);
-  backdrop-filter:blur(12px);
-}
-.right{display:flex;gap:6px;align-items:center}
-.battery.low{color:#ff453a}
-
-/* ===== HOME PAGES ===== */
-#homeWrapper{
-  position:absolute;
-  inset:0;
-  overflow:hidden;
-}
-#homePages{
-  display:flex;
-  height:100%;
-  transition:transform .35s ease;
-}
-.homePage{
-  min-width:100%;
-  padding:40px 20px;
+/* ===== ホーム ===== */
+#home{
+  position:absolute; inset:0;
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:18px;
-  box-sizing:border-box;
+  padding:40px 20px;
   background:linear-gradient(180deg,#0a3d62,#1e5799);
 }
-
-/* ===== ICON ===== */
-.icon{text-align:center;font-size:12px}
+.icon{
+  text-align:center;
+  font-size:12px;
+}
 .appIcon{
   width:60px;height:60px;
   margin:auto;
   border-radius:14px;
-  background:linear-gradient(135deg,#ff3b30,#ff9f0a);
-}
-
-/* ===== PAGE DOTS ===== */
-#pageDots{
-  position:fixed;
-  bottom:18px;
-  width:100%;
+  background:#1c1c1e;
   display:flex;
+  align-items:center;
   justify-content:center;
-  gap:6px;
-  z-index:20;
+  font-size:26px;
 }
-.dot{
-  width:6px;height:6px;
-  border-radius:50%;
-  background:rgba(255,255,255,.35);
-}
-.dot.active{background:#fff}
 
-/* ===== APP ===== */
+/* ===== アプリ画面 ===== */
 .app{
-  position:absolute;
-  inset:0;
-  background:#000;
+  position:absolute; inset:0;
   display:none;
+  padding:20px;
+  background:#000;
 }
-.nav{
-  height:44px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:600;
-  border-bottom:1px solid #333;
+h1{margin:0 0 20px;font-size:20px;}
+.back{
+  position:absolute; top:12px; left:12px;
+  font-size:16px;
+  color:#0a84ff;
 }
-.list{padding:12px}
-.cell{
-  background:#1c1c1e;
-  padding:14px;
+button{
+  padding:12px;
   border-radius:12px;
-  margin-bottom:10px;
-}
-
-/* ===== HOME BUTTON ===== */
-#homeBtn{
-  position:fixed;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  width:44px;height:44px;
-  border-radius:50%;
-  background:#1c1c1e;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
+  border:none;
+  font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HOME -->
-<div id="homeWrapper">
-  <div id="homePages"></div>
+<!-- ===== ホーム ===== -->
+<div id="home">
+  <div class="icon" onclick="openApp('clock')">
+    <div class="appIcon">🕒</div>時計
+  </div>
+  <div class="icon" onclick="openApp('calc')">
+    <div class="appIcon">➕</div>計算機
+  </div>
+  <div class="icon" onclick="openApp('compass')">
+    <div class="appIcon">🧭</div>コンパス
+  </div>
+  <div class="icon" onclick="openApp('mic')">
+    <div class="appIcon">🎤</div>ホールマイク
+  </div>
 </div>
-<div id="pageDots"></div>
 
-<!-- HOME BUTTON -->
-<div id="homeBtn">🔘</div>
+<!-- ===== 時計 ===== -->
+<div class="app" id="clock">
+  <div class="back" onclick="goHome()">ホーム</div>
+  <h1>時計</h1>
+  <div id="time" style="font-size:48px;margin-top:40px;"></div>
+</div>
+
+<!-- ===== 計算機 ===== -->
+<div class="app" id="calc">
+  <div class="back" onclick="goHome()">ホーム</div>
+  <h1>計算機</h1>
+  <input id="calcDisp" readonly style="width:100%;font-size:28px;text-align:right;">
+  <div style="margin-top:10px;">
+    <button onclick="add('7')">7</button>
+    <button onclick="add('8')">8</button>
+    <button onclick="add('9')">9</button>
+    <button onclick="add('+')">+</button>
+    <button onclick="add('=')">=</button>
+  </div>
+</div>
+
+<!-- ===== コンパス ===== -->
+<div class="app" id="compass">
+  <div class="back" onclick="goHome()">ホーム</div>
+  <h1>コンパス</h1>
+  <div id="deg" style="font-size:36px;margin-top:40px;">0°</div>
+</div>
+
+<!-- ===== ホールマイク ===== -->
+<div class="app" id="mic">
+  <div class="back" onclick="goHome()">ホーム</div>
+  <h1>ホールマイク</h1>
+  <button onclick="startEcho()">🎤 開始</button>
+</div>
 
 <script>
-/* ===== APP DEFINITIONS ===== */
-const systemApps = [
-  {name:"アラート"},
-  {name:"設定"},
-];
-
-const autoApps = Array.from({length:60},(_,i)=>({
-  name:`アプリ${i+1}`
-}));
-
-const apps = [...systemApps, ...autoApps];
-
-/* ===== HOME GENERATION ===== */
-const APPS_PER_PAGE = 16;
-const pages=[];
-for(let i=0;i<apps.length;i+=APPS_PER_PAGE){
-  pages.push(apps.slice(i,i+APPS_PER_PAGE));
+/* ===== 共通 ===== */
+function openApp(id){
+  home.style.display="none";
+  document.getElementById(id).style.display="block";
 }
-
-const homePages=document.getElementById("homePages");
-const pageDots=document.getElementById("pageDots");
-
-/* ページ作成 */
-pages.forEach((page,pi)=>{
-  const pageDiv=document.createElement("div");
-  pageDiv.className="homePage";
-
-  page.forEach(app=>{
-    const icon=document.createElement("div");
-    icon.className="icon";
-    icon.innerHTML=`<div class="appIcon"></div>${app.name}`;
-    icon.onclick=()=>openApp(app.name);
-    pageDiv.appendChild(icon);
-
-    /* アプリ画面生成 */
-    const appDiv=document.createElement("div");
-    appDiv.className="app";
-    appDiv.id="app_"+app.name;
-    appDiv.innerHTML=`
-      <div class="status">
-        <span class="time"></span>
-        <div class="right">
-          <span>📶</span>
-          <span class="battery"></span>
-        </div>
-      </div>
-      <div class="nav">${app.name}</div>
-      <div class="list">
-        <div class="cell">このアプリは準備中です</div>
-        <div class="cell">iOS風UIサンプル</div>
-      </div>
-    `;
-    document.body.appendChild(appDiv);
-  });
-
-  homePages.appendChild(pageDiv);
-
-  const dot=document.createElement("div");
-  dot.className="dot"+(pi===0?" active":"");
-  pageDots.appendChild(dot);
-});
-
-/* ===== PAGE SWIPE ===== */
-let currentPage=0,startX=0;
-
-homePages.addEventListener("touchstart",e=>{
-  startX=e.touches[0].clientX;
-});
-homePages.addEventListener("touchend",e=>{
-  const dx=e.changedTouches[0].clientX-startX;
-  if(dx<-50 && currentPage<pages.length-1) currentPage++;
-  if(dx>50 && currentPage>0) currentPage--;
-  updatePage();
-});
-
-function updatePage(){
-  homePages.style.transform=`translateX(-${currentPage*100}%)`;
-  document.querySelectorAll(".dot").forEach((d,i)=>{
-    d.classList.toggle("active",i===currentPage);
-  });
-}
-
-/* ===== NAV ===== */
-function openApp(name){
-  document.getElementById("homeWrapper").style.display="none";
-  document.getElementById("pageDots").style.display="none";
+function goHome(){
   document.querySelectorAll(".app").forEach(a=>a.style.display="none");
-  document.getElementById("app_"+name).style.display="block";
+  home.style.display="grid";
 }
-homeBtn.onclick=()=>{
-  document.querySelectorAll(".app").forEach(a=>a.style.display="none");
-  document.getElementById("homeWrapper").style.display="block";
-  document.getElementById("pageDots").style.display="flex";
-  updatePage();
-};
 
-/* ===== TIME ===== */
+/* ===== 時計 ===== */
 setInterval(()=>{
-  const t=new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
-  document.querySelectorAll(".time").forEach(e=>e.textContent=t);
+  const d=new Date();
+  time.textContent=d.toLocaleTimeString("ja-JP");
 },1000);
 
-/* ===== BATTERY ===== */
-function setBattery(level){
-  const p=Math.round(level*100);
-  const icon=p<=10?"🪫":"🔋";
-  document.querySelectorAll(".battery").forEach(b=>{
-    b.textContent=`${icon} ${p}%`;
-    b.classList.toggle("low",p<=10);
+/* ===== 計算機 ===== */
+function add(v){
+  if(v==="="){
+    calcDisp.value=eval(calcDisp.value);
+  }else{
+    calcDisp.value+=v;
+  }
+}
+
+/* ===== コンパス ===== */
+if(window.DeviceOrientationEvent){
+  window.addEventListener("deviceorientation",e=>{
+    deg.textContent=Math.round(e.alpha||0)+"°";
   });
 }
-if(navigator.getBattery){
-  navigator.getBattery().then(b=>{
-    setBattery(b.level);
-    b.onlevelchange=()=>setBattery(b.level);
-  });
-}else{
-  setBattery(1);
+
+/* ===== ホールマイク（エコー100%） ===== */
+async function startEcho(){
+  const ctx=new AudioContext();
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  const mic=ctx.createMediaStreamSource(stream);
+
+  const delay=ctx.createDelay();
+  delay.delayTime.value=0.35;
+
+  const gain=ctx.createGain();
+  gain.gain.value=0.95;
+
+  mic.connect(delay);
+  delay.connect(gain);
+  gain.connect(delay);
+  delay.connect(ctx.destination);
 }
 </script>
 

@@ -3,226 +3,202 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Mini iOS</title>
+<title>iOS風システム</title>
 
 <style>
-/* ===== 全体 ===== */
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   background:#000;
   color:#fff;
-  height:100vh;
   overflow:hidden;
 }
-
-/* ===== ホーム ===== */
-#home{
-  position:absolute;
-  inset:0;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:18px;
-  padding:40px 20px;
-  background:linear-gradient(180deg,#0a3d62,#1e5799);
-}
-.icon{
-  text-align:center;
-  font-size:12px;
-}
-.appIcon{
-  width:60px;
-  height:60px;
-  margin:auto;
-  border-radius:14px;
-  background:#1c1c1e;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:26px;
-}
-
-/* ===== アプリ画面 ===== */
-.app{
-  position:absolute;
-  inset:0;
-  display:none;
-  padding:20px;
-  background:#000;
-}
-h1{
-  margin:0 0 20px;
-  font-size:20px;
-}
-
-/* ===== 🔘 ホームボタン ===== */
+.screen{position:absolute;inset:0;display:none;}
+#home{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:40px 20px;}
+.icon{text-align:center;font-size:12px;}
+.appIcon{width:60px;height:60px;margin:auto;border-radius:14px;background:#333;}
 #homeBtn{
-  position:fixed;
-  right:18px;
-  top:50%;
-  transform:translateY(-50%);
-  width:52px;
-  height:52px;
-  border:none;
-  background:transparent;
-  font-size:32px;
-  line-height:52px;
-  text-align:center;
-  z-index:9999;
-}
-#homeBtn:active{
-  opacity:0.6;
+  position:fixed;right:20px;top:50%;
+  font-size:26px;cursor:pointer;
 }
 
-/* ===== 電卓 ===== */
-.calc{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
+/* アプリ共通 */
+.app{padding:20px;}
+h1{margin:0 0 10px;font-size:20px;}
+button{padding:10px;border-radius:10px;border:none;font-size:16px}
+
+/* アラート */
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.35);
+  display:none;align-items:center;justify-content:center;
 }
-.calc button{
-  padding:16px;
-  font-size:18px;
-  border-radius:10px;
-  border:none;
+.alert{
+  width:270px;background:#f2f2f7;color:#000;
+  border-radius:14px;text-align:center;overflow:hidden;
 }
-.calc input{
-  width:100%;
-  font-size:32px;
-  text-align:right;
-  margin-bottom:10px;
-}
+.alert h3{margin:16px;font-size:17px}
+.alert p{margin:0 16px 14px;font-size:13px}
+.alertBtns{display:flex;border-top:1px solid #ccc}
+.alertBtns button{flex:1;background:none}
+.red{color:#ff3b30;font-weight:600}
+.blue{color:#007aff;font-weight:600}
+.green{color:#34c759;font-weight:600}
+
+/* 電卓 */
+.calc{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.calc input{grid-column:span 4;font-size:22px;padding:10px}
+
+/* 設定 */
+.slider{width:100%}
 </style>
 </head>
 
 <body>
 
-<!-- ===== ホーム ===== -->
-<div id="home">
-  <div class="icon" onclick="openApp('clock')">
-    <div class="appIcon">🕒</div>時計
-  </div>
-  <div class="icon" onclick="openApp('calc')">
-    <div class="appIcon">➕</div>計算機
-  </div>
-  <div class="icon" onclick="openApp('compass')">
-    <div class="appIcon">🧭</div>コンパス
-  </div>
-  <div class="icon" onclick="openApp('mic')">
-    <div class="appIcon">🎤</div>ホールマイク
-  </div>
+<!-- ホーム -->
+<div id="home" class="screen">
+  <div class="icon" onclick="openApp('alertApp')"><div class="appIcon"></div>アラート</div>
+  <div class="icon" onclick="openApp('touchAlert')"><div class="appIcon"></div>タッチアラート</div>
+  <div class="icon" onclick="openApp('settings')"><div class="appIcon"></div>設定</div>
+  <div class="icon" onclick="openApp('calc')"><div class="appIcon"></div>電卓</div>
+  <div class="icon" onclick="openApp('clock')"><div class="appIcon"></div>時計</div>
+  <div class="icon" onclick="openApp('compass')"><div class="appIcon"></div>コンパス</div>
+  <div class="icon" onclick="openApp('mic')"><div class="appIcon"></div>ホールマイク</div>
 </div>
 
-<!-- ===== 時計 ===== -->
-<div class="app" id="clock">
-  <h1>時計</h1>
-  <div id="time" style="font-size:48px;margin-top:40px;"></div>
+<!-- 🔘ホームボタン -->
+<div id="homeBtn" onclick="goHome()">🔘</div>
+
+<!-- ===== アラートアプリ ===== -->
+<div id="alertApp" class="screen app">
+<h1>アラート</h1>
+<input id="aTitle" placeholder="タイトル（必須）">
+<textarea id="aMsg" placeholder="メッセージ"></textarea><br><br>
+<button onclick="showAlert('allow')">許可 / キャンセル</button><br><br>
+<button onclick="showAlert('ok')">OK / キャンセル</button><br><br>
+<button onclick="showAlert('info')">わかりました</button>
 </div>
 
-<!-- ===== 計算機（完全版） ===== -->
-<div class="app" id="calc">
-  <h1>計算機</h1>
+<!-- タッチアラート -->
+<div id="touchAlert" class="screen app">
+<h1>タッチアラート</h1>
+<button onclick="touchWarn()">🚫 押すな</button>
+</div>
 
-  <input id="calcDisp" readonly>
+<!-- 設定 -->
+<div id="settings" class="screen app">
+<h1>設定</h1>
+<p>音量</p>
+<input type="range" class="slider">
+<p>明るさ</p>
+<input type="range" class="slider" oninput="document.body.style.opacity=this.value/100" value="100">
+<hr>
+<p>バージョン：v1.21.60</p>
+<div class="app" id="info">
+  <h1>詳細情報</h1>
 
-  <div class="calc">
-    <button onclick="c()">C</button>
-    <button onclick="p('%')">%</button>
-    <button onclick="p('/')">÷</button>
-    <button onclick="p('*')">×</button>
+  <div style="font-size:14px;line-height:1.8">
+    作成　（株）SOGOHOUSE開発センター本部<br>
+    システム形成　（株）OpenAI<br>
+    システム点検　（株）SOGOHOUSE編集部<br>
+    システム公開　（株）GitHub<br>
+    システム管理　（株）SOGOHOUSE本部<br>
+    システムアップデート　（株）SOGOHOUSE編集部<br>
+    提案　（株）OpenAI<br>
+    コード変換　（株）OpenAI<br><br>
 
-    <button onclick="p('7')">7</button>
-    <button onclick="p('8')">8</button>
-    <button onclick="p('9')">9</button>
-    <button onclick="p('-')">−</button>
-
-    <button onclick="p('4')">4</button>
-    <button onclick="p('5')">5</button>
-    <button onclick="p('6')">6</button>
-    <button onclick="p('+')">＋</button>
-
-    <button onclick="p('1')">1</button>
-    <button onclick="p('2')">2</button>
-    <button onclick="p('3')">3</button>
-    <button onclick="eq()">＝</button>
-
-    <button onclick="p('0')" style="grid-column:span 2">0</button>
-    <button onclick="p('.')">.</button>
+    使用範囲<br>
+    SOGOHOUSE in itoshima city<br>
+    利用可能位置
   </div>
 </div>
-
-<!-- ===== コンパス ===== -->
-<div class="app" id="compass">
-  <h1>コンパス</h1>
-  <div id="deg" style="font-size:36px;margin-top:40px;">0°</div>
 </div>
 
-<!-- ===== ホールマイク ===== -->
-<div class="app" id="mic">
-  <h1>ホールマイク</h1>
-  <button onclick="startEcho()">🎤 開始</button>
+<!-- 電卓 -->
+<div id="calc" class="screen app">
+<h1>電卓</h1>
+<div class="calc">
+<input id="calcDisp" readonly>
+<button onclick="add('7')">7</button><button onclick="add('8')">8</button><button onclick="add('9')">9</button><button onclick="add('/')">÷</button>
+<button onclick="add('4')">4</button><button onclick="add('5')">5</button><button onclick="add('6')">6</button><button onclick="add('*')">×</button>
+<button onclick="add('1')">1</button><button onclick="add('2')">2</button><button onclick="add('3')">3</button><button onclick="add('-')">−</button>
+<button onclick="add('0')">0</button><button onclick="calcEq()">＝</button><button onclick="clr()">C</button><button onclick="add('+')">＋</button>
+</div>
 </div>
 
-<!-- ===== 🔘 ホームボタン ===== -->
-<button id="homeBtn" onclick="goHome()">🔘</button>
+<!-- 時計 -->
+<div id="clock" class="screen app">
+<h1 id="time"></h1>
+</div>
+
+<!-- コンパス -->
+<div id="compass" class="screen app">
+<h1>🧭 N</h1>
+<p>※ 擬似表示</p>
+</div>
+
+<!-- マイク -->
+<div id="mic" class="screen app">
+<h1>🎤 ホールマイク</h1>
+<p>エコー度 100%</p>
+</div>
+
+<!-- システムアラート -->
+<div id="ov" class="overlay">
+<div class="alert">
+<h3 id="alT"></h3>
+<p id="alM"></p>
+<div class="alertBtns" id="alBtns"></div>
+</div>
+</div>
 
 <script>
-/* ===== 画面切替 ===== */
 function openApp(id){
-  home.style.display="none";
-  document.querySelectorAll(".app").forEach(a=>a.style.display="none");
+  document.querySelectorAll('.screen').forEach(s=>s.style.display="none");
   document.getElementById(id).style.display="block";
 }
-function goHome(){
-  document.querySelectorAll(".app").forEach(a=>a.style.display="none");
-  home.style.display="grid";
-}
+function goHome(){ openApp('home'); }
 
-/* ===== 時計 ===== */
-setInterval(()=>{
-  time.textContent = new Date().toLocaleTimeString("ja-JP");
-},1000);
-
-/* ===== 電卓 ===== */
-function p(v){
-  calcDisp.value += v;
-}
-function c(){
-  calcDisp.value = "";
-}
-function eq(){
-  try{
-    calcDisp.value = eval(calcDisp.value);
-  }catch{
-    calcDisp.value = "エラー";
+/* アラート */
+function showAlert(type){
+  if(!aTitle.value)return;
+  alT.textContent=aTitle.value;
+  alM.textContent=aMsg.value||"";
+  alBtns.innerHTML="";
+  if(type==="allow"){
+    alBtns.innerHTML=`<button class="blue" onclick="closeA()">キャンセル</button>
+    <button class="red" onclick="closeA()">許可</button>`;
   }
+  if(type==="ok"){
+    alBtns.innerHTML=`<button class="blue" onclick="closeA()">キャンセル</button>
+    <button class="green" onclick="closeA()">OK</button>`;
+  }
+  if(type==="info"){
+    alBtns.innerHTML=`<button class="blue" onclick="closeA()">わかりました</button>`;
+  }
+  goHome();
+  setTimeout(()=>ov.style.display="flex",80);
+}
+function closeA(){ ov.style.display="none"; }
+
+/* タッチアラート */
+function touchWarn(){
+  alT.textContent="警告";
+  alM.textContent="ボタンを押さないでください";
+  alBtns.innerHTML=`<button class="red" onclick="closeA()">OK</button>`;
+  ov.style.display="flex";
 }
 
-/* ===== コンパス ===== */
-if(window.DeviceOrientationEvent){
-  window.addEventListener("deviceorientation",e=>{
-    deg.textContent = Math.round(e.alpha || 0) + "°";
-  });
-}
+/* 電卓 */
+function add(v){calcDisp.value+=v}
+function calcEq(){calcDisp.value=eval(calcDisp.value)}
+function clr(){calcDisp.value=""}
 
-/* ===== ホールマイク（エコー100%） ===== */
-async function startEcho(){
-  const ctx = new AudioContext();
-  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-  const mic = ctx.createMediaStreamSource(stream);
+/* 時計 */
+setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 
-  const delay = ctx.createDelay();
-  delay.delayTime.value = 0.35;
-
-  const gain = ctx.createGain();
-  gain.gain.value = 0.95;
-
-  mic.connect(delay);
-  delay.connect(gain);
-  gain.connect(delay);
-  delay.connect(ctx.destination);
-}
+openApp('home');
 </script>
-
 </body>
 </html>

@@ -6,6 +6,7 @@
 <title>Mini iOS</title>
 
 <style>
+/* ===== 全体 ===== */
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
@@ -17,7 +18,8 @@ body{
 
 /* ===== ホーム ===== */
 #home{
-  position:absolute; inset:0;
+  position:absolute;
+  inset:0;
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:18px;
@@ -29,7 +31,8 @@ body{
   font-size:12px;
 }
 .appIcon{
-  width:60px;height:60px;
+  width:60px;
+  height:60px;
   margin:auto;
   border-radius:14px;
   background:#1c1c1e;
@@ -41,14 +44,18 @@ body{
 
 /* ===== アプリ画面 ===== */
 .app{
-  position:absolute; inset:0;
+  position:absolute;
+  inset:0;
   display:none;
   padding:20px;
   background:#000;
 }
-h1{margin:0 0 20px;font-size:20px;}
+h1{
+  margin:0 0 20px;
+  font-size:20px;
+}
 
-/* ===== ホームボタン ===== */
+/* ===== 🔘 ホームボタン ===== */
 #homeBtn{
   position:fixed;
   right:18px;
@@ -56,13 +63,34 @@ h1{margin:0 0 20px;font-size:20px;}
   transform:translateY(-50%);
   width:52px;
   height:52px;
-  border-radius:50%;
-  background:#111;   /* 実機のガラス感 */
-  border:none;       /* 黒い縁 完全削除 */
+  border:none;
+  background:transparent;
+  font-size:32px;
+  line-height:52px;
+  text-align:center;
   z-index:9999;
 }
 #homeBtn:active{
-  background:#222;
+  opacity:0.6;
+}
+
+/* ===== 電卓 ===== */
+.calc{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.calc button{
+  padding:16px;
+  font-size:18px;
+  border-radius:10px;
+  border:none;
+}
+.calc input{
+  width:100%;
+  font-size:32px;
+  text-align:right;
+  margin-bottom:10px;
 }
 </style>
 </head>
@@ -91,16 +119,35 @@ h1{margin:0 0 20px;font-size:20px;}
   <div id="time" style="font-size:48px;margin-top:40px;"></div>
 </div>
 
-<!-- ===== 計算機 ===== -->
+<!-- ===== 計算機（完全版） ===== -->
 <div class="app" id="calc">
   <h1>計算機</h1>
-  <input id="calcDisp" readonly style="width:100%;font-size:28px;text-align:right;">
-  <div style="margin-top:10px;">
-    <button onclick="add('7')">7</button>
-    <button onclick="add('8')">8</button>
-    <button onclick="add('9')">9</button>
-    <button onclick="add('+')">+</button>
-    <button onclick="add('=')">=</button>
+
+  <input id="calcDisp" readonly>
+
+  <div class="calc">
+    <button onclick="c()">C</button>
+    <button onclick="p('%')">%</button>
+    <button onclick="p('/')">÷</button>
+    <button onclick="p('*')">×</button>
+
+    <button onclick="p('7')">7</button>
+    <button onclick="p('8')">8</button>
+    <button onclick="p('9')">9</button>
+    <button onclick="p('-')">−</button>
+
+    <button onclick="p('4')">4</button>
+    <button onclick="p('5')">5</button>
+    <button onclick="p('6')">6</button>
+    <button onclick="p('+')">＋</button>
+
+    <button onclick="p('1')">1</button>
+    <button onclick="p('2')">2</button>
+    <button onclick="p('3')">3</button>
+    <button onclick="eq()">＝</button>
+
+    <button onclick="p('0')" style="grid-column:span 2">0</button>
+    <button onclick="p('.')">.</button>
   </div>
 </div>
 
@@ -116,11 +163,11 @@ h1{margin:0 0 20px;font-size:20px;}
   <button onclick="startEcho()">🎤 開始</button>
 </div>
 
-<!-- ===== ホームボタン ===== -->
-<button id="homeBtn" onclick="goHome()"></button>
+<!-- ===== 🔘 ホームボタン ===== -->
+<button id="homeBtn" onclick="goHome()">🔘</button>
 
 <script>
-/* ===== 共通 ===== */
+/* ===== 画面切替 ===== */
 function openApp(id){
   home.style.display="none";
   document.querySelectorAll(".app").forEach(a=>a.style.display="none");
@@ -133,36 +180,42 @@ function goHome(){
 
 /* ===== 時計 ===== */
 setInterval(()=>{
-  time.textContent=new Date().toLocaleTimeString("ja-JP");
+  time.textContent = new Date().toLocaleTimeString("ja-JP");
 },1000);
 
-/* ===== 計算機 ===== */
-function add(v){
-  if(v==="="){
-    calcDisp.value=eval(calcDisp.value);
-  }else{
-    calcDisp.value+=v;
+/* ===== 電卓 ===== */
+function p(v){
+  calcDisp.value += v;
+}
+function c(){
+  calcDisp.value = "";
+}
+function eq(){
+  try{
+    calcDisp.value = eval(calcDisp.value);
+  }catch{
+    calcDisp.value = "エラー";
   }
 }
 
 /* ===== コンパス ===== */
 if(window.DeviceOrientationEvent){
   window.addEventListener("deviceorientation",e=>{
-    deg.textContent=Math.round(e.alpha||0)+"°";
+    deg.textContent = Math.round(e.alpha || 0) + "°";
   });
 }
 
 /* ===== ホールマイク（エコー100%） ===== */
 async function startEcho(){
-  const ctx=new AudioContext();
-  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-  const mic=ctx.createMediaStreamSource(stream);
+  const ctx = new AudioContext();
+  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+  const mic = ctx.createMediaStreamSource(stream);
 
-  const delay=ctx.createDelay();
-  delay.delayTime.value=0.35;
+  const delay = ctx.createDelay();
+  delay.delayTime.value = 0.35;
 
-  const gain=ctx.createGain();
-  gain.gain.value=0.95;
+  const gain = ctx.createGain();
+  gain.gain.value = 0.95;
 
   mic.connect(delay);
   delay.connect(gain);

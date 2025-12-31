@@ -3,272 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>SOGO iPad OS</title>
+<title>SOGO GAME PACK</title>
 
 <style>
-:root{
-  --brightness:1;
-}
 body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  background:#000;
-  color:#fff;
-  height:100vh;
-  overflow:hidden;
-  filter:brightness(var(--brightness));
+  margin:0;background:#000;color:#fff;
+  font-family:-apple-system;overflow:hidden;
 }
-
-/* ===== 共通 ===== */
-.hidden{ display:none; }
 
 /* ===== ホーム ===== */
-.home{
-  position:absolute; inset:0;
-  padding:40px 20px;
+#home{
+  position:absolute;inset:0;
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:18px;
-  background:
-    radial-gradient(circle at 20% 10%, #2e86de, transparent 40%),
-    radial-gradient(circle at 80% 30%, #6c5ce7, transparent 45%),
-    linear-gradient(180deg,#0a3d62,#1e5799);
+  gap:14px;padding:20px;
+  background:linear-gradient(#0a3d62,#1e5799);
 }
-.icon{
-  text-align:center;
-  font-size:12px;
-}
-.appIcon{
-  width:60px;height:60px;
-  margin:auto;
+.icon{text-align:center;font-size:11px}
+.icon div{
+  width:60px;height:60px;margin:auto;
   border-radius:14px;
   background:linear-gradient(135deg,#ff3b30,#ff9f0a);
 }
-.icon span{ display:block; margin-top:6px; }
 
-/* ===== ホームボタン ===== */
-.homeBtn{
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  width:44px;height:44px;
-  border-radius:50%;
-  background:#1c1c1e;
-  color:#fff;
-  font-size:22px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:50;
-}
-
-/* ===== アプリ画面 ===== */
+/* ===== ゲーム画面 ===== */
 .app{
-  position:absolute; inset:0;
-  background:#000;
-  padding:20px;
+  position:absolute;inset:0;
+  display:none;padding:10px;
 }
-h1{ font-size:20px; margin:0 0 14px; }
-label{ font-size:13px; color:#8e8e93; }
-input,textarea{
-  width:100%;
-  background:#1c1c1e;
-  color:#fff;
-  border:0;
-  border-radius:10px;
-  padding:10px;
-  margin-top:6px;
+.back{
+  position:absolute;top:10px;left:10px;
+  background:#333;color:#fff;
+  padding:6px 10px;border-radius:8px;
 }
-textarea{ height:70px; resize:none; }
-.btn{
-  margin-top:16px;
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  border:0;
-  font-size:17px;
-  background:#0a84ff;
-  color:#fff;
+canvas{
+  background:#111;border-radius:12px;
+  display:block;margin:20px auto;
 }
 
-/* ===== アラート ===== */
+/* ===== iOS風アラート ===== */
 .overlay{
-  position:fixed; inset:0;
+  position:fixed;inset:0;
   background:rgba(0,0,0,.36);
-  backdrop-filter:blur(14px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:100;
+  backdrop-filter: blur(14px);
+  display:none;align-items:center;justify-content:center;
+  z-index:999;
 }
 .alert{
-  width:270px;
-  background:#f2f2f7;
-  border-radius:14px;
-  text-align:center;
-  overflow:hidden;
+  width:270px;border-radius:14px;
+  background:#f2f2f7;color:#000;
+  text-align:center;overflow:hidden;
 }
 .alert h3{
-  margin:16px 16px 6px;
-  font-size:17px;
-  color:#000;
+  margin:16px 16px 6px;font-size:17px;
 }
 .alert p{
-  margin:0 16px 14px;
-  font-size:13.5px;
-  color:#3a3a3c;
+  margin:0 16px 14px;font-size:13.5px;
 }
 .buttons{
-  display:flex;
-  border-top:.5px solid #c6c6c8;
+  display:flex;border-top:1px solid #ccc;
 }
 .buttons button{
-  flex:1;
-  padding:12px 0;
-  font-size:17px;
-  background:none;
-  border:0;
-  color:#007aff;
+  flex:1;padding:12px 0;
+  font-size:17px;border:0;background:none;
 }
-
-/* ===== 設定 ===== */
-.settingItem{
-  padding:12px 0;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-}
-.small{ font-size:13px; color:#8e8e93; }
-input[type=range]{ width:100%; }
-.switch{
-  width:48px;height:28px;
-  background:#3a3a3c;
-  border-radius:14px;
-  position:relative;
-}
-.switch::after{
-  content:"";
-  width:24px;height:24px;
-  background:#fff;
-  border-radius:50%;
-  position:absolute;
-  top:2px; left:2px;
-}
-.switch.on{ background:#34c759; }
-.switch.on::after{ left:22px; }
+.blue{color:#007aff;font-weight:600}
 </style>
 </head>
 
 <body>
 
-<!-- ホーム -->
-<div class="home" id="home">
-  <div class="icon" onclick="openApp('alertApp')">
-    <div class="appIcon"></div><span>アラート</span>
-  </div>
-  <div class="icon" onclick="openApp('touchApp')">
-    <div class="appIcon"></div><span>タッチアラート</span>
-  </div>
-  <div class="icon" onclick="openApp('settings')">
-    <div class="appIcon"></div><span>設定</span>
-  </div>
+<!-- ===== ホーム ===== -->
+<div id="home"></div>
+
+<!-- ===== ゲーム共通 ===== -->
+<div id="game" class="app">
+  <div class="back" onclick="goHome()">← ホーム</div>
+  <h2 id="gTitle"></h2>
+  <canvas id="cv" width="320" height="320"></canvas>
+  <p id="info"></p>
+  <button id="btn1"></button>
+  <button id="btn2"></button>
 </div>
 
-<!-- ホームボタン -->
-<div class="homeBtn" onclick="goHome()">🔘</div>
-
-<!-- アラートアプリ -->
-<div class="app hidden" id="alertApp">
-  <h1>アラート</h1>
-  <label>タイトル（必須）</label>
-  <input id="aTitleIn">
-  <label>メッセージ</label>
-  <textarea id="aMsgIn"></textarea>
-  <button class="btn" onclick="fireAlert()">表示</button>
-</div>
-
-<!-- タッチアラート -->
-<div class="app hidden" id="touchApp">
-  <h1>タッチアラート</h1>
-  <button class="btn" onclick="touchAlert()">押すな</button>
-</div>
-
-<!-- 設定 -->
-<div class="app hidden" id="settings">
-  <h1>設定</h1>
-
-  <div class="settingItem">
-    <div>音量</div>
-    <input type="range" min="0" max="1" step="0.01" onchange="vol=this.value">
-  </div>
-
-  <div class="settingItem">
-    <div>明るさ</div>
-    <input type="range" min="0.5" max="1.2" step="0.01"
-      onchange="document.documentElement.style.setProperty('--brightness',this.value)">
-  </div>
-
-  <div class="settingItem">
-    <div>全画面表示</div>
-    <div class="switch" id="fsw" onclick="toggleFS()"></div>
-  </div>
-
-  <p class="small">バージョン v1.21.60</p>
-
-  <p class="small">
-作成（株）SOGOHOUSE開発センター本部<br>
-システム形成（株）OpenAI<br>
-システム点検（株）SOGOHOUSE編集部<br>
-システム公開（株）GitHub<br>
-システム管理（株）SOGOHOUSE本部<br>
-システムアップデート（株）SOGOHOUSE編集部<br>
-提案 / コード変換（株）OpenAI<br>
-使用範囲 SOGOHOUSE in itoshima city
-  </p>
-</div>
-
-<!-- アラート -->
+<!-- ===== アラート ===== -->
 <div class="overlay" id="ov">
   <div class="alert">
-    <h3 id="aT"></h3>
-    <p id="aM"></p>
+    <h3 id="aTitle"></h3>
+    <p id="aMsg"></p>
     <div class="buttons">
-      <button onclick="ov.style.display='none'">キャンセル</button>
-      <button onclick="ov.style.display='none'">許可</button>
+      <button class="blue" onclick="closeAlert()">キャンセル</button>
+      <button onclick="closeAlert()">許可</button>
     </div>
   </div>
 </div>
 
 <script>
-let vol=1;
+/* ===== ゲーム一覧 ===== */
+const games=[
+ "🍟 ポテト職人","🐍 スリザリオ風","❄️ ホワサバ風",
+ "🧱 マイクラ風","🧩 テトリス風","📦 倉庫番",
+ "🐍 ヘビゲーム","🎮 バトリングクラシック",
+ "🐟 フィッシュ育成","🍟 ポテト工場",
+ "❄️ サバイバル追加","🎨 顔ヨッシー／マリオ"
+];
 
-function openApp(id){
-  home.classList.add("hidden");
-  document.querySelectorAll('.app').forEach(a=>a.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
+const home=document.getElementById("home");
+const game=document.getElementById("game");
+const cv=document.getElementById("cv");
+const ctx=cv.getContext("2d");
+
+/* ===== ホーム生成 ===== */
+games.forEach((g,i)=>{
+  const d=document.createElement("div");
+  d.className="icon";
+  d.innerHTML=`<div></div>${g}`;
+  d.onclick=()=>startGame(i);
+  home.appendChild(d);
+});
+
 function goHome(){
-  document.querySelectorAll('.app').forEach(a=>a.classList.add("hidden"));
-  home.classList.remove("hidden");
+  game.style.display="none";
+  home.style.display="grid";
 }
-function fireAlert(){
-  if(!aTitleIn.value.trim()) return;
-  goHome();
-  aT.textContent=aTitleIn.value;
-  aM.textContent=aMsgIn.value;
-  setTimeout(()=>ov.style.display="flex",80);
+
+/* ===== iOS風アラート ===== */
+function showAlert(t,m){
+  aTitle.textContent=t;
+  aMsg.textContent=m||"";
+  ov.style.display="flex";
 }
-function touchAlert(){
-  const u=new SpeechSynthesisUtterance("ボタンを押さないでください");
-  u.volume=vol;
-  speechSynthesis.speak(u);
+function closeAlert(){
+  ov.style.display="none";
 }
-function toggleFS(){
-  fsw.classList.toggle("on");
-  if(document.fullscreenElement) document.exitFullscreen();
-  else document.documentElement.requestFullscreen();
+
+/* ===== ゲーム起動 ===== */
+function startGame(id){
+  home.style.display="none";
+  game.style.display="block";
+  gTitle.textContent=games[id];
+  ctx.clearRect(0,0,320,320);
+  btn1.textContent="";
+  btn2.textContent="";
+  info.textContent="";
+
+  /* 🍟 ポテト職人 */
+  if(id===0){
+    let s=0;
+    btn1.textContent="揚げる";
+    btn2.textContent="コンソメ";
+    btn1.onclick=()=>info.textContent="スコア："+(s+=10);
+    btn2.onclick=()=>{
+      s+=100;
+      showAlert("写真に保存してください",
+        "🍟 このビデオは自動的には保存されません");
+      info.textContent="スコア："+s+" ★";
+    };
+  }
+
+  /* 🐍 スリザリオ風 */
+  else if(id===1){
+    let x=160,y=160;
+    setInterval(()=>{
+      ctx.fillStyle="#111";
+      ctx.fillRect(0,0,320,320);
+      x+=Math.random()*6-3;
+      y+=Math.random()*6-3;
+      ctx.fillStyle="#0f0";
+      ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*2);ctx.fill();
+    },50);
+    info.textContent="自動前進・敵AI";
+  }
+
+  /* その他 */
+  else{
+    btn1.textContent="アクション";
+    btn1.onclick=()=>showAlert("確認","ゲーム動作OK");
+    info.textContent="プロトタイプ動作中";
+  }
 }
 </script>
 

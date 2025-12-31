@@ -3,267 +3,247 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>iOS Alert System Simulator</title>
+<title>SOGOHOUSE iOS Home</title>
 
 <style>
-/* ================= BASE ================= */
 html,body{
-  margin:0;height:100%;background:#000;
+  margin:0;height:100%;
+  background:#000;color:#fff;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  color:#fff;overflow:hidden;
+  overflow:hidden;
 }
 
-/* ================= HOME ================= */
-#home{
-  position:absolute;inset:0;
-  padding:40px 20px;
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:18px;
-  background:
-    radial-gradient(circle at 20% 10%, #2e86de, transparent 40%),
-    radial-gradient(circle at 80% 30%, #6c5ce7, transparent 45%),
-    linear-gradient(180deg,#0a3d62,#1e5799);
+/* ===== STATUS BAR ===== */
+.status{
+  height:28px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 10px;
+  font-size:13px;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(12px);
 }
+.right{display:flex;gap:6px;align-items:center}
+.battery.low{color:#ff453a}
+
+/* ===== HOME PAGES ===== */
+#homeWrapper{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+}
+#homePages{
+  display:flex;
+  height:100%;
+  transition:transform .35s ease;
+}
+.homePage{
+  min-width:100%;
+  padding:40px 20px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+  box-sizing:border-box;
+  background:linear-gradient(180deg,#0a3d62,#1e5799);
+}
+
+/* ===== ICON ===== */
 .icon{text-align:center;font-size:12px}
 .appIcon{
-  width:60px;height:60px;margin:auto;
+  width:60px;height:60px;
+  margin:auto;
   border-radius:14px;
   background:linear-gradient(135deg,#ff3b30,#ff9f0a);
 }
 
-/* ================= APP ================= */
-.app{display:none;position:absolute;inset:0;padding:20px;background:#000}
-h1{margin:0 0 12px;font-size:20px}
+/* ===== PAGE DOTS ===== */
+#pageDots{
+  position:fixed;
+  bottom:18px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  z-index:20;
+}
+.dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:rgba(255,255,255,.35);
+}
+.dot.active{background:#fff}
 
-/* ================= ALERT ================= */
-#overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,.36);
-  backdrop-filter:blur(var(--blur,14px));
-  display:none;align-items:center;justify-content:center;
-  z-index:999;
+/* ===== APP ===== */
+.app{
+  position:absolute;
+  inset:0;
+  background:#000;
+  display:none;
 }
-.alert{
-  width:270px;border-radius:14px;
-  background:#f2f2f7;color:#000;
-  text-align:center;overflow:hidden;
+.nav{
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  border-bottom:1px solid #333;
 }
-.alert h3{margin:16px 16px 6px;font-size:17px}
-.alert p{margin:0 16px 14px;font-size:13.5px;color:#3a3a3c}
-.buttons{display:flex;border-top:1px solid #c6c6c8}
-.buttons button{
-  flex:1;border:0;background:none;
-  padding:12px 0;font-size:17px;
-  color:#007aff;font-weight:600;
+.list{padding:12px}
+.cell{
+  background:#1c1c1e;
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:10px;
 }
-.buttons button+button{border-left:1px solid #c6c6c8}
 
-/* ================= SETTINGS ================= */
-.settingRow{
-  display:flex;justify-content:space-between;
-  padding:12px 0;border-bottom:1px solid #333;
+/* ===== HOME BUTTON ===== */
+#homeBtn{
+  position:fixed;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:44px;height:44px;
+  border-radius:50%;
+  background:#1c1c1e;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
 }
-.switch{
-  width:44px;height:26px;border-radius:13px;
-  background:#444;position:relative;
-}
-.switch.on{background:#34c759}
-.switch::after{
-  content:"";position:absolute;top:2px;left:2px;
-  width:22px;height:22px;background:#fff;border-radius:50%;
-}
-.switch.on::after{left:20px}
-input[type=range]{width:140px}
-.small{font-size:13px;color:#aaa;line-height:1.4}
 </style>
 </head>
 
 <body>
 
-<!-- ================= HOME ================= -->
-<div id="home">
-  <div class="icon" onclick="openApp('alertApp')">
-    <div class="appIcon"></div>アラート
-  </div>
-  <div class="icon" onclick="openApp('settingsApp')">
-    <div class="appIcon"></div>設定
-  </div>
+<!-- HOME -->
+<div id="homeWrapper">
+  <div id="homePages"></div>
 </div>
+<div id="pageDots"></div>
 
-<!-- ================= ALERT APP ================= -->
-<div class="app" id="alertApp">
-<h1>アラート</h1>
-
-<select id="preset" onchange="loadPreset()"></select><br><br>
-
-<input id="aTitleIn" placeholder="タイトル（必須）"><br><br>
-<textarea id="aMsgIn" placeholder="メッセージ"></textarea><br><br>
-
-<button onclick="fireAlert()">表示</button>
-</div>
-
-<!-- ================= SETTINGS ================= -->
-<div class="app" id="settingsApp">
-<h1>設定</h1>
-
-<div class="settingRow">
- ダークモード
- <div class="switch" onclick="toggleDark(this)"></div>
-</div>
-
-<div class="settingRow">
- 明るさ
- <input type="range" min="20" max="100" value="100" oninput="setBrightness(this.value)">
-</div>
-
-<div class="settingRow">
- 音量
- <input type="range" min="0" max="100" value="60">
-</div>
-
-<div class="settingRow">
- アラートぼかし
- <input type="range" min="6" max="24" value="14" oninput="setBlur(this.value)">
-</div>
-
-<div class="settingRow">
- Face ID風演出
- <div class="switch on"></div>
-</div>
-
-<div class="settingRow">
- 管理デバイス
- <span>このiPadは管理されています</span>
-</div>
-
-<div class="settingRow">
- バージョン
- <span>v1.21.60</span>
-</div>
-
-<div class="settingRow">
- デバイス情報
-</div>
-<div class="small">
-作成：（株）SOGOHOUSE開発センター本部<br>
-システム形成：（株）OpenAI<br>
-システム管理：（株）SOGOHOUSE本部<br>
-コード変換：（株）OpenAI<br>
-使用範囲：SOGOHOUSE in itoshima city
-</div>
-
-<div class="settingRow">
- 安全のために
- <span>安心モード 有効</span>
-</div>
-</div>
-
-<!-- ================= ALERT ================= -->
-<div id="overlay">
-<div class="alert">
-<h3 id="aTitle"></h3>
-<p id="aMsg"></p>
-<div class="buttons">
-<button onclick="closeAlert()">キャンセル</button>
-<button onclick="closeAlert()">OK</button>
-</div>
-</div>
-</div>
+<!-- HOME BUTTON -->
+<div id="homeBtn">🔘</div>
 
 <script>
-/* ================= STATE ================= */
-function openApp(id){
-  document.querySelectorAll('.app').forEach(a=>a.style.display="none");
-  home.style.display="none";
-  document.getElementById(id).style.display="block";
-}
-
-/* ================= ALERT PRESETS (50) ================= */
-const presets=[
-["アクセス要求","この操作を許可しますか？"],
-["位置情報","“App”が位置情報へのアクセスを求めています"],
-["カメラ","カメラへのアクセスを許可しますか？"],
-["マイク","マイクへのアクセスを許可しますか？"],
-["写真","写真へのアクセスを許可しますか？"],
-["Bluetooth","Bluetoothを使用しますか？"],
-["通知","通知を許可しますか？"],
-["ローカルネットワーク","ローカルネットワークへのアクセス"],
-["Face ID","Face IDで認証してください"],
-["Touch ID","Touch IDで認証してください"],
-["MDM","このiPadは管理されています"],
-["VPN","VPN構成を追加しますか？"],
-["プロファイル","プロファイルをインストールしますか？"],
-["再起動","再起動が必要です"],
-["ストレージ不足","iPadの空き容量が不足しています"],
-["iCloud","iCloudにサインインしてください"],
-["Apple ID","Apple IDがロックされています"],
-["App削除","このAppを削除しますか？"],
-["バックアップ","バックアップが失敗しました"],
-["バッテリー","バッテリー残量が少なくなっています"],
-["管理","制限が有効です"],
-["スクリーン","画面収録を開始しますか？"],
-["支払い","支払い方法を確認してください"],
-["通信","通信環境を確認してください"],
-["Wi-Fi","Wi-Fiがオフになっています"],
-["モバイル通信","モバイル通信が無効です"],
-["時刻","時刻設定を確認してください"],
-["証明書","証明書が無効です"],
-["セキュリティ","セキュリティ警告"],
-["プライバシー","プライバシー設定を確認"],
-["アップデート","ソフトウェアアップデートがあります"],
-["復元","復元しますか？"],
-["初期化","すべてのデータを消去しますか？"],
-["制限","操作が制限されています"],
-["Siri","Siriを使用しますか？"],
-["音声","音声認識を許可しますか？"],
-["AirDrop","AirDropを有効にしますか？"],
-["共有","共有を許可しますか？"],
-["管理者","管理者の承認が必要です"],
-["カレンダー","カレンダーへのアクセス"],
-["連絡先","連絡先へのアクセス"],
-["リマインダー","リマインダーへのアクセス"],
-["メディア","メディアへのアクセス"],
-["キーボード","フルアクセスを許可しますか？"],
-["安全","安全のため操作が制限されました"],
-["完了","操作が完了しました"]
+/* ===== APP DEFINITIONS ===== */
+const systemApps = [
+  {name:"アラート"},
+  {name:"設定"},
 ];
 
-const presetSel=document.getElementById("preset");
-presets.forEach((p,i)=>{
-  const o=document.createElement("option");
-  o.value=i;o.textContent=p[0];
-  presetSel.appendChild(o);
+const autoApps = Array.from({length:60},(_,i)=>({
+  name:`アプリ${i+1}`
+}));
+
+const apps = [...systemApps, ...autoApps];
+
+/* ===== HOME GENERATION ===== */
+const APPS_PER_PAGE = 16;
+const pages=[];
+for(let i=0;i<apps.length;i+=APPS_PER_PAGE){
+  pages.push(apps.slice(i,i+APPS_PER_PAGE));
+}
+
+const homePages=document.getElementById("homePages");
+const pageDots=document.getElementById("pageDots");
+
+/* ページ作成 */
+pages.forEach((page,pi)=>{
+  const pageDiv=document.createElement("div");
+  pageDiv.className="homePage";
+
+  page.forEach(app=>{
+    const icon=document.createElement("div");
+    icon.className="icon";
+    icon.innerHTML=`<div class="appIcon"></div>${app.name}`;
+    icon.onclick=()=>openApp(app.name);
+    pageDiv.appendChild(icon);
+
+    /* アプリ画面生成 */
+    const appDiv=document.createElement("div");
+    appDiv.className="app";
+    appDiv.id="app_"+app.name;
+    appDiv.innerHTML=`
+      <div class="status">
+        <span class="time"></span>
+        <div class="right">
+          <span>📶</span>
+          <span class="battery"></span>
+        </div>
+      </div>
+      <div class="nav">${app.name}</div>
+      <div class="list">
+        <div class="cell">このアプリは準備中です</div>
+        <div class="cell">iOS風UIサンプル</div>
+      </div>
+    `;
+    document.body.appendChild(appDiv);
+  });
+
+  homePages.appendChild(pageDiv);
+
+  const dot=document.createElement("div");
+  dot.className="dot"+(pi===0?" active":"");
+  pageDots.appendChild(dot);
 });
-loadPreset();
 
-function loadPreset(){
-  const p=presets[preset.value];
-  aTitleIn.value=p[0];
-  aMsgIn.value=p[1];
+/* ===== PAGE SWIPE ===== */
+let currentPage=0,startX=0;
+
+homePages.addEventListener("touchstart",e=>{
+  startX=e.touches[0].clientX;
+});
+homePages.addEventListener("touchend",e=>{
+  const dx=e.changedTouches[0].clientX-startX;
+  if(dx<-50 && currentPage<pages.length-1) currentPage++;
+  if(dx>50 && currentPage>0) currentPage--;
+  updatePage();
+});
+
+function updatePage(){
+  homePages.style.transform=`translateX(-${currentPage*100}%)`;
+  document.querySelectorAll(".dot").forEach((d,i)=>{
+    d.classList.toggle("active",i===currentPage);
+  });
 }
 
-/* ================= ALERT ENGINE ================= */
-function fireAlert(){
-  if(!aTitleIn.value.trim())return;
-  document.querySelectorAll('.app').forEach(a=>a.style.display="none");
-  home.style.display="grid";
-  aTitle.textContent=aTitleIn.value;
-  aMsg.textContent=aMsgIn.value;
-  setTimeout(()=>overlay.style.display="flex",80);
+/* ===== NAV ===== */
+function openApp(name){
+  document.getElementById("homeWrapper").style.display="none";
+  document.getElementById("pageDots").style.display="none";
+  document.querySelectorAll(".app").forEach(a=>a.style.display="none");
+  document.getElementById("app_"+name).style.display="block";
 }
-function closeAlert(){overlay.style.display="none"}
+homeBtn.onclick=()=>{
+  document.querySelectorAll(".app").forEach(a=>a.style.display="none");
+  document.getElementById("homeWrapper").style.display="block";
+  document.getElementById("pageDots").style.display="flex";
+  updatePage();
+};
 
-/* ================= SETTINGS ================= */
-function toggleDark(sw){
-  sw.classList.toggle("on");
-  document.body.style.background=
-    sw.classList.contains("on")?"#000":"#fff";
+/* ===== TIME ===== */
+setInterval(()=>{
+  const t=new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"});
+  document.querySelectorAll(".time").forEach(e=>e.textContent=t);
+},1000);
+
+/* ===== BATTERY ===== */
+function setBattery(level){
+  const p=Math.round(level*100);
+  const icon=p<=10?"🪫":"🔋";
+  document.querySelectorAll(".battery").forEach(b=>{
+    b.textContent=`${icon} ${p}%`;
+    b.classList.toggle("low",p<=10);
+  });
 }
-function setBrightness(v){
-  document.body.style.filter=`brightness(${v}%)`;
-}
-function setBlur(v){
-  document.documentElement.style.setProperty("--blur",v+"px");
+if(navigator.getBattery){
+  navigator.getBattery().then(b=>{
+    setBattery(b.level);
+    b.onlevelchange=()=>setBattery(b.level);
+  });
+}else{
+  setBattery(1);
 }
 </script>
 

@@ -2,25 +2,25 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-
-<!-- iOSでツールバーを消すための最重要設定 -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Alert">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-
-<title>Alert Apps</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>SOGO iPad OS</title>
 
 <style>
-/* ===== 基本 ===== */
+:root{
+  --brightness:1;
+}
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#000;
+  color:#fff;
   height:100vh;
   overflow:hidden;
-  background:#000;
-  padding-top:env(safe-area-inset-top);
+  filter:brightness(var(--brightness));
 }
+
+/* ===== 共通 ===== */
+.hidden{ display:none; }
 
 /* ===== ホーム ===== */
 .home{
@@ -34,132 +34,130 @@ body{
     radial-gradient(circle at 80% 30%, #6c5ce7, transparent 45%),
     linear-gradient(180deg,#0a3d62,#1e5799);
 }
-.icon{ text-align:center; color:#fff; font-size:12px; }
+.icon{
+  text-align:center;
+  font-size:12px;
+}
 .appIcon{
-  width:60px;height:60px;margin:auto;border-radius:14px;
+  width:60px;height:60px;
+  margin:auto;
+  border-radius:14px;
+  background:linear-gradient(135deg,#ff3b30,#ff9f0a);
 }
-.alertIcon{ background:linear-gradient(135deg,#ff3b30,#ff9f0a); }
-.touchIcon{ background:linear-gradient(135deg,#ff0000,#7f0000); }
-.settingsIcon{ background:linear-gradient(135deg,#8e8e93,#3a3a3c); }
-
-/* ===== アプリ画面 ===== */
-.appView{
-  position:absolute; inset:0;
-  background:#000; color:#fff;
-  display:none; padding:20px;
-}
-h1{ font-size:20px; margin:0 0 14px; }
-label{ font-size:13px; color:#b0b0b0; display:block; margin-top:14px; }
-input,textarea{
-  width:100%; background:#1c1c1e; color:#fff;
-  border:0; border-radius:10px;
-  padding:10px; font-size:15px;
-}
-textarea{ resize:none; height:70px; }
-.btn{
-  margin-top:16px; width:100%;
-  padding:14px; border-radius:14px;
-  border:0; font-size:17px;
-  background:#0a84ff; color:#fff;
-}
-
-/* ===== iOS風アラート ===== */
-.overlay{
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.36);
-  backdrop-filter: blur(14px) saturate(1.2);
-  display:none; align-items:center; justify-content:center;
-  z-index:20;
-}
-.alert{
-  width:270px; border-radius:14px;
-  background:#f2f2f7; text-align:center;
-  overflow:hidden;
-}
-.alert h3{ margin:16px 16px 6px; font-size:17px; }
-.alert p{ margin:0 16px 14px; font-size:13.5px; color:#3a3a3c; }
-.buttons{ display:flex; border-top:1px solid #c6c6c8; }
-.buttons button{
-  flex:1; padding:12px 0;
-  border:0; background:transparent;
-  font-size:17px; color:#007aff; font-weight:600;
-}
+.icon span{ display:block; margin-top:6px; }
 
 /* ===== ホームボタン ===== */
 .homeBtn{
-  position:fixed;
-  right:14px; top:50%;
+  position:absolute;
+  right:10px;
+  top:50%;
   transform:translateY(-50%);
-  width:48px; height:48px;
+  width:44px;height:44px;
   border-radius:50%;
-  background:rgba(60,60,67,.6);
-  backdrop-filter: blur(8px);
-  display:flex; align-items:center; justify-content:center;
-  font-size:22px; color:#fff;
-  z-index:30;
-}
-
-/* ===== アプリスイッチャー ===== */
-#switcher{
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.35);
-  backdrop-filter: blur(20px);
-  display:none; align-items:center; justify-content:center;
-  z-index:25;
-}
-.cards{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:22px;
-  width:90%;
-}
-.card{
-  aspect-ratio:4/3;
-  background:#000;
-  border-radius:18px;
-}
-.card span{
-  display:block;
-  margin-top:-28px;
-  text-align:center;
+  background:#1c1c1e;
   color:#fff;
-  font-size:14px;
+  font-size:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
 }
 
-/* ===== 明るさ ===== */
-#brightnessOverlay{
-  position:fixed; inset:0;
+/* ===== アプリ画面 ===== */
+.app{
+  position:absolute; inset:0;
   background:#000;
-  pointer-events:none;
-  opacity:0;
+  padding:20px;
+}
+h1{ font-size:20px; margin:0 0 14px; }
+label{ font-size:13px; color:#8e8e93; }
+input,textarea{
+  width:100%;
+  background:#1c1c1e;
+  color:#fff;
+  border:0;
+  border-radius:10px;
+  padding:10px;
+  margin-top:6px;
+}
+textarea{ height:70px; resize:none; }
+.btn{
+  margin-top:16px;
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:0;
+  font-size:17px;
+  background:#0a84ff;
+  color:#fff;
+}
+
+/* ===== アラート ===== */
+.overlay{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.36);
+  backdrop-filter:blur(14px);
+  display:none;
+  align-items:center;
+  justify-content:center;
   z-index:100;
 }
+.alert{
+  width:270px;
+  background:#f2f2f7;
+  border-radius:14px;
+  text-align:center;
+  overflow:hidden;
+}
+.alert h3{
+  margin:16px 16px 6px;
+  font-size:17px;
+  color:#000;
+}
+.alert p{
+  margin:0 16px 14px;
+  font-size:13.5px;
+  color:#3a3a3c;
+}
+.buttons{
+  display:flex;
+  border-top:.5px solid #c6c6c8;
+}
+.buttons button{
+  flex:1;
+  padding:12px 0;
+  font-size:17px;
+  background:none;
+  border:0;
+  color:#007aff;
+}
 
-/* ===== iOSスイッチ ===== */
-.iosSwitch{
-  width:52px; height:32px; position:relative; margin-top:6px;
+/* ===== 設定 ===== */
+.settingItem{
+  padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
 }
-.iosSwitch input{ display:none; }
-.slider{
-  position:absolute; inset:0;
+.small{ font-size:13px; color:#8e8e93; }
+input[type=range]{ width:100%; }
+.switch{
+  width:48px;height:28px;
   background:#3a3a3c;
-  border-radius:32px;
-  transition:.25s;
+  border-radius:14px;
+  position:relative;
 }
-.slider:before{
+.switch::after{
   content:"";
+  width:24px;height:24px;
+  background:#fff;
+  border-radius:50%;
   position:absolute;
-  width:28px;height:28px;
-  left:2px;top:2px;
-  background:#fff;border-radius:50%;
-  transition:.25s;
+  top:2px; left:2px;
 }
-.iosSwitch input:checked + .slider{
-  background:#34c759;
-}
-.iosSwitch input:checked + .slider:before{
-  transform:translateX(20px);
-}
+.switch.on{ background:#34c759; }
+.switch.on::after{ left:22px; }
 </style>
 </head>
 
@@ -167,150 +165,111 @@ textarea{ resize:none; height:70px; }
 
 <!-- ホーム -->
 <div class="home" id="home">
-  <div class="icon" onclick="openAlertApp()">
-    <div class="appIcon alertIcon"></div>アラート
+  <div class="icon" onclick="openApp('alertApp')">
+    <div class="appIcon"></div><span>アラート</span>
   </div>
-  <div class="icon" onclick="openTouchApp()">
-    <div class="appIcon touchIcon"></div>タッチアラート
+  <div class="icon" onclick="openApp('touchApp')">
+    <div class="appIcon"></div><span>タッチアラート</span>
   </div>
-  <div class="icon" onclick="openSettings()">
-    <div class="appIcon settingsIcon"></div>設定
+  <div class="icon" onclick="openApp('settings')">
+    <div class="appIcon"></div><span>設定</span>
   </div>
+</div>
+
+<!-- ホームボタン -->
+<div class="homeBtn" onclick="goHome()">🔘</div>
+
+<!-- アラートアプリ -->
+<div class="app hidden" id="alertApp">
+  <h1>アラート</h1>
+  <label>タイトル（必須）</label>
+  <input id="aTitleIn">
+  <label>メッセージ</label>
+  <textarea id="aMsgIn"></textarea>
+  <button class="btn" onclick="fireAlert()">表示</button>
 </div>
 
 <!-- タッチアラート -->
-<div class="appView" id="touchApp">
+<div class="app hidden" id="touchApp">
   <h1>タッチアラート</h1>
-  <button class="btn" onclick="danger()">🚫 押すな</button>
+  <button class="btn" onclick="touchAlert()">押すな</button>
 </div>
 
 <!-- 設定 -->
-<div class="appView" id="settingsApp">
+<div class="app hidden" id="settings">
   <h1>設定</h1>
 
-  <label>タッチアラートの音量</label>
-  <input type="range" min="0" max="100" value="70" id="volumeRange">
-
-  <label>明るさ</label>
-  <input type="range" min="10" max="100" value="100" id="brightnessRange">
-
-  <label>全画面表示</label>
-  <div class="iosSwitch">
-    <input type="checkbox" id="fullscreenToggle">
-    <span class="slider"></span>
+  <div class="settingItem">
+    <div>音量</div>
+    <input type="range" min="0" max="1" step="0.01" onchange="vol=this.value">
   </div>
+
+  <div class="settingItem">
+    <div>明るさ</div>
+    <input type="range" min="0.5" max="1.2" step="0.01"
+      onchange="document.documentElement.style.setProperty('--brightness',this.value)">
+  </div>
+
+  <div class="settingItem">
+    <div>全画面表示</div>
+    <div class="switch" id="fsw" onclick="toggleFS()"></div>
+  </div>
+
+  <p class="small">バージョン v1.21.60</p>
+
+  <p class="small">
+作成（株）SOGOHOUSE開発センター本部<br>
+システム形成（株）OpenAI<br>
+システム点検（株）SOGOHOUSE編集部<br>
+システム公開（株）GitHub<br>
+システム管理（株）SOGOHOUSE本部<br>
+システムアップデート（株）SOGOHOUSE編集部<br>
+提案 / コード変換（株）OpenAI<br>
+使用範囲 SOGOHOUSE in itoshima city
+  </p>
 </div>
 
 <!-- アラート -->
 <div class="overlay" id="ov">
   <div class="alert">
-    <h3>警告</h3>
-    <p>ボタンを押さないでください</p>
+    <h3 id="aT"></h3>
+    <p id="aM"></p>
     <div class="buttons">
-      <button onclick="stopAll()">OK</button>
+      <button onclick="ov.style.display='none'">キャンセル</button>
+      <button onclick="ov.style.display='none'">許可</button>
     </div>
   </div>
 </div>
 
-<!-- スイッチャー -->
-<div id="switcher">
-  <div class="cards" id="cards"></div>
-</div>
-
-<div class="homeBtn" onclick="homeTap()">🔘</div>
-<div id="brightnessOverlay"></div>
-
 <script>
-/* ===== 状態 ===== */
-let runningApps={touch:false,settings:false};
-let lastTap=0;
+let vol=1;
 
-/* ===== ホーム操作 ===== */
+function openApp(id){
+  home.classList.add("hidden");
+  document.querySelectorAll('.app').forEach(a=>a.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
 function goHome(){
-  document.querySelectorAll('.appView').forEach(v=>v.style.display="none");
-  ov.style.display="none";
-  switcher.style.display="none";
-  home.style.display="grid";
+  document.querySelectorAll('.app').forEach(a=>a.classList.add("hidden"));
+  home.classList.remove("hidden");
 }
-
-function homeTap(){
-  const now=Date.now();
-  if(now-lastTap<350){ openSwitcher(); lastTap=0; }
-  else{ goHome(); lastTap=now; }
-}
-
-/* ===== アプリ起動 ===== */
-function openAlertApp(){}
-function openTouchApp(){
-  home.style.display="none";
-  touchApp.style.display="block";
-  runningApps.touch=true;
-}
-function openSettings(){
-  home.style.display="none";
-  settingsApp.style.display="block";
-  runningApps.settings=true;
-}
-
-/* ===== スイッチャー ===== */
-function openSwitcher(){
-  cards.innerHTML="";
-  if(runningApps.touch)
-    cards.innerHTML+=`<div class="card" onclick="openTouchApp()"><span>タッチアラート</span></div>`;
-  if(runningApps.settings)
-    cards.innerHTML+=`<div class="card" onclick="openSettings()"><span>設定</span></div>`;
-  home.style.display="none";
-  switcher.style.display="flex";
-}
-
-/* ===== タッチアラート ===== */
-let audioCtx,osc,timer,gainVal=.7;
-volumeRange.oninput=()=>gainVal=volumeRange.value/100;
-
-function danger(){
+function fireAlert(){
+  if(!aTitleIn.value.trim()) return;
   goHome();
-  startSiren();
+  aT.textContent=aTitleIn.value;
+  aM.textContent=aMsgIn.value;
   setTimeout(()=>ov.style.display="flex",80);
 }
-function startSiren(){
-  audioCtx=new AudioContext();
-  osc=audioCtx.createOscillator();
-  const g=audioCtx.createGain();
-  g.gain.value=gainVal;
-  osc.type="sawtooth";
-  osc.connect(g); g.connect(audioCtx.destination);
-  osc.start();
-  let up=true;
-  timer=setInterval(()=>{
-    osc.frequency.setValueAtTime(up?880:440,audioCtx.currentTime);
-    up=!up;
-  },300);
+function touchAlert(){
+  const u=new SpeechSynthesisUtterance("ボタンを押さないでください");
+  u.volume=vol;
+  speechSynthesis.speak(u);
 }
-function stopAll(){
-  ov.style.display="none";
-  clearInterval(timer);
-  osc?.stop(); audioCtx?.close();
+function toggleFS(){
+  fsw.classList.toggle("on");
+  if(document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen();
 }
-
-/* ===== 明るさ ===== */
-brightnessRange.oninput=()=>{
-  brightnessOverlay.style.opacity=1-brightnessRange.value/100;
-};
-
-/* ===== 全画面 ===== */
-fullscreenToggle.onchange=()=>{
-  fullscreenToggle.checked
-    ? document.documentElement.requestFullscreen?.()
-    : document.exitFullscreen?.();
-};
-document.addEventListener("fullscreenchange",()=>{
-  fullscreenToggle.checked=!!document.fullscreenElement;
-});
-
-/* Safari用ツールバー最小化 */
-window.addEventListener("load",()=>{
-  setTimeout(()=>window.scrollTo(0,1),50);
-});
 </script>
 
 </body>

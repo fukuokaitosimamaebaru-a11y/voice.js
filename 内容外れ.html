@@ -2,21 +2,32 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>Alert App Builder</title>
+
+<!-- iOSでツールバーを消すための最重要設定 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Alert">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+
+<title>Alert Apps</title>
 
 <style>
+/* ===== 基本 ===== */
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  height:100vh; overflow:hidden;
+  height:100vh;
+  overflow:hidden;
+  background:#000;
+  padding-top:env(safe-area-inset-top);
 }
 
 /* ===== ホーム ===== */
 .home{
   position:absolute; inset:0;
   padding:40px 20px;
-  display:grid; grid-template-columns:repeat(4,1fr);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
   gap:18px;
   background:
     radial-gradient(circle at 20% 10%, #2e86de, transparent 40%),
@@ -26,8 +37,10 @@ body{
 .icon{ text-align:center; color:#fff; font-size:12px; }
 .appIcon{
   width:60px;height:60px;margin:auto;border-radius:14px;
-  background:linear-gradient(135deg,#ff3b30,#ff9f0a);
 }
+.alertIcon{ background:linear-gradient(135deg,#ff3b30,#ff9f0a); }
+.touchIcon{ background:linear-gradient(135deg,#ff0000,#7f0000); }
+.settingsIcon{ background:linear-gradient(135deg,#8e8e93,#3a3a3c); }
 
 /* ===== アプリ画面 ===== */
 .appView{
@@ -35,42 +48,118 @@ body{
   background:#000; color:#fff;
   display:none; padding:20px;
 }
-.appView h1{ font-size:20px; margin:0 0 14px; }
-label{ font-size:13px; color:#b0b0b0; display:block; margin-top:12px; }
-input, textarea{
-  width:100%; box-sizing:border-box;
-  background:#1c1c1e; color:#fff;
+h1{ font-size:20px; margin:0 0 14px; }
+label{ font-size:13px; color:#b0b0b0; display:block; margin-top:14px; }
+input,textarea{
+  width:100%; background:#1c1c1e; color:#fff;
   border:0; border-radius:10px;
   padding:10px; font-size:15px;
 }
 textarea{ resize:none; height:70px; }
 .btn{
   margin-top:16px; width:100%;
-  padding:12px; border-radius:12px;
+  padding:14px; border-radius:14px;
   border:0; font-size:17px;
   background:#0a84ff; color:#fff;
 }
 
-/* ===== アラート ===== */
+/* ===== iOS風アラート ===== */
 .overlay{
   position:fixed; inset:0;
   background:rgba(0,0,0,.36);
-  backdrop-filter: blur(14px) saturate(1.25);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  display:none; align-items:center; justify-content:center; z-index:10;
+  backdrop-filter: blur(14px) saturate(1.2);
+  display:none; align-items:center; justify-content:center;
+  z-index:20;
 }
 .alert{
-  width:270px; border-radius:14px; overflow:hidden; text-align:center;
-  background:linear-gradient(180deg,rgba(242,242,247,.92),rgba(242,242,247,.84));
+  width:270px; border-radius:14px;
+  background:#f2f2f7; text-align:center;
+  overflow:hidden;
 }
-.alert h3{ margin:16px 16px 6px; font-size:17px; font-weight:600; color:#000; }
+.alert h3{ margin:16px 16px 6px; font-size:17px; }
 .alert p{ margin:0 16px 14px; font-size:13.5px; color:#3a3a3c; }
-.buttons{ display:flex; border-top:.5px solid rgba(60,60,67,.29); }
+.buttons{ display:flex; border-top:1px solid #c6c6c8; }
 .buttons button{
-  flex:1; padding:12px 0; font-size:17px; border:0;
-  background:transparent; color:#007aff; font-weight:600;
+  flex:1; padding:12px 0;
+  border:0; background:transparent;
+  font-size:17px; color:#007aff; font-weight:600;
 }
-.buttons button+button{ border-left:.5px solid rgba(60,60,67,.29); }
+
+/* ===== ホームボタン ===== */
+.homeBtn{
+  position:fixed;
+  right:14px; top:50%;
+  transform:translateY(-50%);
+  width:48px; height:48px;
+  border-radius:50%;
+  background:rgba(60,60,67,.6);
+  backdrop-filter: blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; color:#fff;
+  z-index:30;
+}
+
+/* ===== アプリスイッチャー ===== */
+#switcher{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.35);
+  backdrop-filter: blur(20px);
+  display:none; align-items:center; justify-content:center;
+  z-index:25;
+}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+  width:90%;
+}
+.card{
+  aspect-ratio:4/3;
+  background:#000;
+  border-radius:18px;
+}
+.card span{
+  display:block;
+  margin-top:-28px;
+  text-align:center;
+  color:#fff;
+  font-size:14px;
+}
+
+/* ===== 明るさ ===== */
+#brightnessOverlay{
+  position:fixed; inset:0;
+  background:#000;
+  pointer-events:none;
+  opacity:0;
+  z-index:100;
+}
+
+/* ===== iOSスイッチ ===== */
+.iosSwitch{
+  width:52px; height:32px; position:relative; margin-top:6px;
+}
+.iosSwitch input{ display:none; }
+.slider{
+  position:absolute; inset:0;
+  background:#3a3a3c;
+  border-radius:32px;
+  transition:.25s;
+}
+.slider:before{
+  content:"";
+  position:absolute;
+  width:28px;height:28px;
+  left:2px;top:2px;
+  background:#fff;border-radius:50%;
+  transition:.25s;
+}
+.iosSwitch input:checked + .slider{
+  background:#34c759;
+}
+.iosSwitch input:checked + .slider:before{
+  transform:translateX(20px);
+}
 </style>
 </head>
 
@@ -78,61 +167,150 @@ textarea{ resize:none; height:70px; }
 
 <!-- ホーム -->
 <div class="home" id="home">
-  <div class="icon" onclick="openApp()">
-    <div class="appIcon"></div>
-    アラート
+  <div class="icon" onclick="openAlertApp()">
+    <div class="appIcon alertIcon"></div>アラート
+  </div>
+  <div class="icon" onclick="openTouchApp()">
+    <div class="appIcon touchIcon"></div>タッチアラート
+  </div>
+  <div class="icon" onclick="openSettings()">
+    <div class="appIcon settingsIcon"></div>設定
   </div>
 </div>
 
-<!-- アプリ -->
-<div class="appView" id="app">
-  <h1>アラート</h1>
-
-  <label>タイトル（必須）</label>
-  <input id="titleInput" placeholder="例：“Safari”がアクセスを求めています">
-
-  <label>メッセージ（任意）</label>
-  <textarea id="msgInput" placeholder="例：この操作を許可しますか？"></textarea>
-
-  <button class="btn" onclick="showAlert()">表示</button>
+<!-- タッチアラート -->
+<div class="appView" id="touchApp">
+  <h1>タッチアラート</h1>
+  <button class="btn" onclick="danger()">🚫 押すな</button>
 </div>
 
-<!-- システムアラート -->
+<!-- 設定 -->
+<div class="appView" id="settingsApp">
+  <h1>設定</h1>
+
+  <label>タッチアラートの音量</label>
+  <input type="range" min="0" max="100" value="70" id="volumeRange">
+
+  <label>明るさ</label>
+  <input type="range" min="10" max="100" value="100" id="brightnessRange">
+
+  <label>全画面表示</label>
+  <div class="iosSwitch">
+    <input type="checkbox" id="fullscreenToggle">
+    <span class="slider"></span>
+  </div>
+</div>
+
+<!-- アラート -->
 <div class="overlay" id="ov">
   <div class="alert">
-    <h3 id="aTitle"></h3>
-    <p id="aMsg"></p>
+    <h3>警告</h3>
+    <p>ボタンを押さないでください</p>
     <div class="buttons">
-      <button onclick="closeAlert()">キャンセル</button>
-      <button onclick="closeAlert()">許可</button>
+      <button onclick="stopAll()">OK</button>
     </div>
   </div>
 </div>
 
+<!-- スイッチャー -->
+<div id="switcher">
+  <div class="cards" id="cards"></div>
+</div>
+
+<div class="homeBtn" onclick="homeTap()">🔘</div>
+<div id="brightnessOverlay"></div>
+
 <script>
-function openApp(){
-  home.style.display="none";
-  app.style.display="block";
-}
+/* ===== 状態 ===== */
+let runningApps={touch:false,settings:false};
+let lastTap=0;
 
-function showAlert(){
-  const t = titleInput.value.trim();
-  if(!t) return; // タイトル必須
-
-  // ★ ここが重要：ホームに戻す
-  app.style.display="none";
+/* ===== ホーム操作 ===== */
+function goHome(){
+  document.querySelectorAll('.appView').forEach(v=>v.style.display="none");
+  ov.style.display="none";
+  switcher.style.display="none";
   home.style.display="grid";
-
-  aTitle.textContent = t;
-  aMsg.textContent = msgInput.value || "";
-
-  // 少し間を置くとiOS感UP
-  setTimeout(()=>{ ov.style.display="flex"; }, 80);
 }
 
-function closeAlert(){
-  ov.style.display="none"; // 押した後もホームのまま
+function homeTap(){
+  const now=Date.now();
+  if(now-lastTap<350){ openSwitcher(); lastTap=0; }
+  else{ goHome(); lastTap=now; }
 }
+
+/* ===== アプリ起動 ===== */
+function openAlertApp(){}
+function openTouchApp(){
+  home.style.display="none";
+  touchApp.style.display="block";
+  runningApps.touch=true;
+}
+function openSettings(){
+  home.style.display="none";
+  settingsApp.style.display="block";
+  runningApps.settings=true;
+}
+
+/* ===== スイッチャー ===== */
+function openSwitcher(){
+  cards.innerHTML="";
+  if(runningApps.touch)
+    cards.innerHTML+=`<div class="card" onclick="openTouchApp()"><span>タッチアラート</span></div>`;
+  if(runningApps.settings)
+    cards.innerHTML+=`<div class="card" onclick="openSettings()"><span>設定</span></div>`;
+  home.style.display="none";
+  switcher.style.display="flex";
+}
+
+/* ===== タッチアラート ===== */
+let audioCtx,osc,timer,gainVal=.7;
+volumeRange.oninput=()=>gainVal=volumeRange.value/100;
+
+function danger(){
+  goHome();
+  startSiren();
+  setTimeout(()=>ov.style.display="flex",80);
+}
+function startSiren(){
+  audioCtx=new AudioContext();
+  osc=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  g.gain.value=gainVal;
+  osc.type="sawtooth";
+  osc.connect(g); g.connect(audioCtx.destination);
+  osc.start();
+  let up=true;
+  timer=setInterval(()=>{
+    osc.frequency.setValueAtTime(up?880:440,audioCtx.currentTime);
+    up=!up;
+  },300);
+}
+function stopAll(){
+  ov.style.display="none";
+  clearInterval(timer);
+  osc?.stop(); audioCtx?.close();
+}
+
+/* ===== 明るさ ===== */
+brightnessRange.oninput=()=>{
+  brightnessOverlay.style.opacity=1-brightnessRange.value/100;
+};
+
+/* ===== 全画面 ===== */
+fullscreenToggle.onchange=()=>{
+  fullscreenToggle.checked
+    ? document.documentElement.requestFullscreen?.()
+    : document.exitFullscreen?.();
+};
+document.addEventListener("fullscreenchange",()=>{
+  fullscreenToggle.checked=!!document.fullscreenElement;
+});
+
+/* Safari用ツールバー最小化 */
+window.addEventListener("load",()=>{
+  setTimeout(()=>window.scrollTo(0,1),50);
+});
 </script>
 
 </body>
